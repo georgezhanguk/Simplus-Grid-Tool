@@ -94,6 +94,11 @@ clear('i');
 % The names of "ApparatusType" and "Para" can not be changed, because they
 % will also be used in simulink model.
 
+% Modified by George
+% Interlinking converter designation
+[ICBus, ICLinkedBus] = SimplusGT.PowerFlow.ICBusFlag(ApparatusType,ApparatusBus,NumBus,NumApparatus);
+
+
 % Notes:
 % No error checking if number of apparatuses is different from number of buses.
 
@@ -113,6 +118,8 @@ switch UserDataStruct.Advance.PowerFlowAlgorithm
         [PowerFlow] = SimplusGT.PowerFlow.PowerFlowGS(ListBus,ListLine,Wbase);
     case 2  % Newton-Raphson
        	[PowerFlow] = SimplusGT.PowerFlow.PowerFlowNR(ListBus,ListLine,Wbase);
+    case 3  % Gauss-Seidel Hybrid
+        [PowerFlow] = SimplusGT.PowerFlow.PowerFlowGSHybrid(ListBus,ListLine,Wbase,ICBus,ICLinkedBus);
     otherwise
         error(['Error: Wrong setting for power flow algorithm.']);
 end
