@@ -109,10 +109,10 @@ clear('i');
 
 % ### Power flow analysis
 fprintf('Do the power flow analysis...\n')
-if ~isempty(FlagDcArea)
-    UserDataStruct.Advance.PowerFlowAlgorithm = 1;
-    fprintf(['Warning: Because the system has dc area(s), the Gauss-Seidel power flow method is always used.\n']);
-end
+% if ~isempty(FlagDcArea)
+%     UserDataStruct.Advance.PowerFlowAlgorithm = 1;
+%     fprintf(['Warning: Because the system has dc area(s), the Gauss-Seidel power flow method is always used.\n']);
+% end
 switch UserDataStruct.Advance.PowerFlowAlgorithm
     case 1  % Gauss-Seidel 
         [PowerFlow] = SimplusGT.PowerFlow.PowerFlowGS(ListBus,ListLine,Wbase);

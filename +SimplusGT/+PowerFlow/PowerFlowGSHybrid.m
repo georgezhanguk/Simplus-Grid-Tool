@@ -1,6 +1,10 @@
-% Gauss - Seidel power flow analysis
-
-% Author(s): Yitong Li, Yunjie Gu
+% Gauss - Seidel power flow analysis with interlinking converter
+%
+% Modified by: George Zhang
+%
+% Description:
+%   Based on SimplusGT.PowerFlow.PowerFlowGS.m by Yitong Li, Yunjie Gu
+%   Modified to include Gauss-Seidel power flow analysis.
 
 function [PowerFlow,Ybus,V,I,Ang0,P,Q,Vm]=PowerFlowGSHybrid(ListBus,ListLine,w0,ICBus,ICLinkedBus)
 
@@ -11,7 +15,8 @@ N_Bus = max(ListNumber);        % Total number of buses
 ListType = ListBus(:,2);        % Ac bus type: 1-Slack, 2-PV,  3-PQ
                                 % Dc bus type: 1-Slack, 2-N/A, 3-P
 
-IndexSlack = find(ListType == 1);      % Index of slack bus
+% IndexSlack = find(ListType == 1);      % Index of slack bus, array type
+IndexSlack = ListType == 1;              % Index of slack bus, boolean
 
 V0   = ListBus(:,3);         % Initial bus voltages.
 th0  = ListBus(:,4);         % Initial bus voltage angles.
@@ -37,9 +42,12 @@ iteration = 0;              % Initialize interaction count
 tolerance_max  = 1e-8;
 iteration_max  = 1e5;
 
-% Set order of iteration, starting with DC area and slack bus last.
-busorder = sortrows(ListBus,[12,2],{'descend','descend'})
-P_t = zeros(N_Bus,1)
+% Set order of iteration, starting with DC area and slack buses last.
+busorder = sortrows(ListBus,[12,2],{'descend','descend'});
+PInt = zeros(N_Bus,1);
+PInt_prev = zeros(N_Bus,1);
+IInt = zeros(N_Bus,1);
+SInt = zeros(N_Bus,1);
 while ((tolerance>tolerance_max) && (iteration<=iteration_max))
     
     for j = 1:N_Bus
@@ -73,17 +81,15 @@ while ((tolerance>tolerance_max) && (iteration<=iteration_max))
             end
         
         end
-            if (ListType(i) == 1 && ICBus(i) == 1) % For DC slack bus on Interlinking Converter
-                % calculate power
-                I_t(i) = Ybus(i,:)*V
-                S_t(i) = V(i).*conj(I_t(i))
-                % Set AC bus power to 
-                %P = PGi - PLi; 
-                P_t(i) = -real(S_t(i))
-                P(ICLinkedBus(i)) = P(ICLinkedBus(i)) + P_t(i)
-                fprintf("slack DC IC")
-            end
-        
+        if (ListType(i) == 1 && ICBus(i) == 1) % For DC slack bus on Interlinking Converter
+            % Calculate Power Transfer on Interlinking Converter
+            IInt(i) = Ybus(i,:)*V;         % Current entering bus i
+            SInt(i) = V(i).*conj(IInt(i)); % Apparent Power entering bus i, source convention
+            PInt(i) = real(SInt(i));       % Real power entering bus i
+            % P(i) = real(SInt(i));          % P for slack bus is not used 
+            P(ICLinkedBus(i)) = P(ICLinkedBus(i)) - PInt(i) + PInt_prev(i); % Update Net Active Power into Interlinked Bus
+            PInt_prev(i) = PInt(i);  % Update PInt_prev
+        end
     end
     
     iteration = iteration + 1;         	% Increment iteration count.
@@ -92,15 +98,11 @@ while ((tolerance>tolerance_max) && (iteration<=iteration_max))
     end
     
     I = Ybus*V;
-    % S = I.*conj(V);
     S = V.*conj(I);
-    N = length(V);
     
-    tolerV = max(abs(abs(V) - abs(Vprev)));         % Calculate V tolerance.
-    tolerP = abs(real(S(1:N)) - P(1:N));            % Calculate P tolerance
-    tolerP(IndexSlack) = 0;                         % The P tolerance at slack bus should be ignored
-    tolerP = max(tolerP);
-%  	tolerQ = max(abs(imag(S(2:N)) + Q(2:N)));     % Calculate Q tolerance, exclude the slack terminal
+    tolerV = max(abs(abs(V) - abs(Vprev)));     % Calculate V tolerance.
+    tolerP = max(abs(real(S) - P).*(~IndexSlack)); % Calculate P tolerance, excluding slack terminals
+    % tolerQ = max(abs(imag(S) + Q).*(~IndexSlack));     % Calculate Q tolerance, exclude the slack terminal
     tolerQ = 0;
     
     % We use tolerV only here to check the total tolerance

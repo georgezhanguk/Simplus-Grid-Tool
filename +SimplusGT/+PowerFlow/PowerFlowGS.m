@@ -1,6 +1,7 @@
 % Gauss - Seidel power flow analysis
-
+%
 % Author(s): Yitong Li, Yunjie Gu
+% Modified by: George Zhang
 
 function [PowerFlow,Ybus,V,I,Ang0,P,Q,Vm]=PowerFlowGS(ListBus,ListLine,w0)
 
@@ -11,7 +12,8 @@ N_Bus = max(ListNumber);        % Total number of buses
 ListType = ListBus(:,2);        % Ac bus type: 1-Slack, 2-PV,  3-PQ
                                 % Dc bus type: 1-Slack, 2-N/A, 3-P
 
-IndexSlack = find(ListType == 1);      % Index of slack bus
+% IndexSlack = find(ListType == 1);      % Index of slack bus, array type
+IndexSlack = ListType == 1;              % Index of slack bus, boolean
 
 V0   = ListBus(:,3);         % Initial bus voltages.
 th0  = ListBus(:,4);         % Initial bus voltage angles.
@@ -77,15 +79,11 @@ while ((tolerance>tolerance_max) && (iteration<=iteration_max))
     end
     
     I = Ybus*V;
-    % S = I.*conj(V);
     S = V.*conj(I);
-    N = length(V);
     
-    tolerV = max(abs(abs(V) - abs(Vprev)));         % Calculate V tolerance.
-    tolerP = abs(real(S(1:N)) - P(1:N));            % Calculate P tolerance
-    tolerP(IndexSlack) = 0;                         % The P tolerance at slack bus should be ignored
-    tolerP = max(tolerP);
-%  	tolerQ = max(abs(imag(S(2:N)) + Q(2:N)));     % Calculate Q tolerance, exclude the slack terminal
+    tolerV = max(abs(abs(V) - abs(Vprev)));     % Calculate V tolerance.
+    tolerP = max(abs(real(S) - P).*(~IndexSlack)); % Calculate P tolerance, excluding slack terminals
+    % tolerQ = max(abs(imag(S) + Q).*(~IndexSlack));     % Calculate Q tolerance, exclude the slack terminal
     tolerQ = 0;
     
     % We use tolerV only here to check the total tolerance
