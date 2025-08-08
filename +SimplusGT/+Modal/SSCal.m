@@ -25,13 +25,13 @@ for modei=1:ModeSelNum
     lambda = Mode(ModeSel)*2*pi;
     pin=1;
     pout=1;
-    for k =1:N_Apparatus
+    for k =1: N_Apparatus
         ZmValAll{modei}{k} = SimplusGT.Modal.ApparatusImpedanceCal(GmDSS_Cell{k}, lambda, ApparatusType{k});
-        if ApparatusType{k} <= 89  % AC apparatus
+        if ApparatusType{k} <= 89  % Ac apparatus
             ResidueAll{modei}{k}=C(pout:pout+1,:) * Phi(:,ModeSel) * Psi(ModeSel,:) * B(:,pin:pin+1);
-        elseif ApparatusType{k} >= 1000 && ApparatusType{k} <= 1089 % DC apparatus
+        elseif ApparatusType{k} >= 1000 && ApparatusType{k} <= 1089 % Dc apparatuses
             ResidueAll{modei}{k}=C(pout,:) * Phi(:,ModeSel) * Psi(ModeSel,:) * B(:,pin);
-        elseif ApparatusType{k} >= 2000 && ApparatusType{k} <= 2009 % Interlink apparatus
+        elseif ApparatusType{k} >= 2000 && ApparatusType{k} <= 2009 % Interlink apparatuses
             ResidueAll{modei}{k}=C(pout:pout+2,:) * Phi(:,ModeSel) * Psi(ModeSel,:) * B(:,pin:pin+2);
         else % Floating bus and passive load: not considered           
             ResidueAll{modei}{k} = [];
