@@ -52,3 +52,5 @@ SimplusGT.Toolbox.Main();
 
 %% Matlab app
 if 0; ModalAnalysisAPP; end      % Modal analysis
+%%
+SimplusGT.Modal.IMRCal
