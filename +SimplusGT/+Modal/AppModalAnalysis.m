@@ -1,7 +1,7 @@
 % Matlab app of participation analysis of layers 1 and 2.
 
 % Author(s): Yue Zhu
-% Modified by: Yitong Li
+% Modified by: Yitong Li, George Zhang
 
 function [AppMdResults,MdDataSave]=AppModalAnalysis(ModeSelect)
 
@@ -56,15 +56,15 @@ for modei=1:ModeSelNum
     for k=1:NumApparatus
         if ApparatusType{k} <= 89 % AC apparatus
             IMR.Type(count) = ApparatusType{k};
-            IMR.IMRVal(count) = SigmaMag/norm(Residue{k},"fro")*norm(ZmVal{k},"fro"); 
+            IMR.IMRVal(count) = SigmaMag/norm(Residue{k},"fro")*norm(ZmVal{k},"fro");
             count = count+1;
         elseif ApparatusType{k} >= 1000 && ApparatusType{k} <= 1089 % Dc apparatus
             IMR.Type(count) = ApparatusType{k};
-            IMR.IMRVal(count) = SigmaMag/norm(Residue{k},"fro")*norm(ZmVal{k},"fro"); 
+            IMR.IMRVal(count) = SigmaMag/norm(Residue{k},"fro")*norm(ZmVal{k},"fro");
             count = count+1;
         elseif ApparatusType{k} >= 2000 && ApparatusType{k} <= 2009 % Interlink apparatus
             IMR.Type(count) = ApparatusType{k};
-            IMR.IMRVal(count) = SigmaMag/norm(Residue{k},"fro")*norm(ZmVal{k},"fro"); 
+            IMR.IMRVal(count) = SigmaMag/norm(Residue{k},"fro")*norm(ZmVal{k},"fro");
             count = count+1;
         elseif  ApparatusType{k} == 90 || ApparatusType{k} == 1090   % infinite bus: let IMR=inf
             IMR.Type(count) = ApparatusType{k};

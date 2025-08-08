@@ -6,10 +6,9 @@
 % Modified by Yitong Li:
 % The option ['Pretty Print',true] in jsonencode is only available for
 % matlab 2021a or later. Therefore, this setting is removed and replaced by
-% a tedious manual method.]
-%
+% a tedious manual method.
 % Modified by George Zhang:
-% Added error() if file fails to open
+% # Addition of error() if failure to open file.
 
 function SaveAsJsonToFile(data,fn)
     
