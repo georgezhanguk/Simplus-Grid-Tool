@@ -50,8 +50,8 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
                 State = {'i_d','i_q','v_dc','i','theta'}; 
             elseif obj.ApparatusType==2005
                 State = {'i_d','i_q','i_d_i','i_q_i','v_d_i','v_q_i','theta','v_dc','v_dc_i','i'};
-            elseif obj.ApparatusType==2004 
-                State = {'i_d','i_q','i_d_i','i_q_i','v_d_i','v_q_i','theta','v_dc','v_dc_i','i','i_i','v_lk','v_lk_i','p_sum_i','p_lk_i'};
+            elseif obj.ApparatusType==2004 i_d; i_q; i_d_i; i_q_i; v_d_i; v_q_i; theta; v_dc; v_dc_i; i; i_i; v_lk; p_sum_i; p_lk_i
+                State = {'i_d','i_q','i_d_i','i_q_i','w','theta','v_dc','v_dc_i','i','P_sum_i','P_diff_i','v_lk_i'};
             else
                 error('Error: Invalid ApparatusType.');
             end
@@ -170,10 +170,10 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
             ki_i_dq = L_ac * w_i^2 /4;
             kp_v_dq = 1/(16*w_i*L_ac);
             ki_v_dq = 1/(4*L_ac);
-            % kp_v_lk = 
-            % ki_v_lk = 
-            % D_dc    =
-            % D_ac    =
+            kp_v_lk = 
+            ki_v_lk = 
+            D_dc    =
+            D_ac    =
             kp_pll = w_pll;
             ki_pll = kp_pll * w_pll/4;
             tau_pll = 1/w_tau_pll;
@@ -223,7 +223,6 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
                 v_dc    = x(8);
                 v_dc_i  = x(9);
                 i       = x(10);
-                i_i     = x(11);
                 v_lk    = x(11);
                 p_sum_i = x(12);
                 p_lk_i  = x(13);
@@ -400,7 +399,7 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
                 dv_dc_i = (v_dc_ref - v_dc) * k_i_vdc;
                 i_ref = (v_dc_ref - v_dc) * k_p_vdc + v_dc_i;
                 di_i = (i_ref - i_dc_lk) * ki_lk;
-                v_lk = (i_dc_ref - i_dc_lk) * kp_lk + i_i;
+                v_lk = (i_dc_ref - i_dc_lk) * kp_lk + i_dc_i;
 
                 % Ac-side L filter
                 di_d = (v_d - R_ac*i_d + w*L_ac*i_q - e_d)/L_ac;

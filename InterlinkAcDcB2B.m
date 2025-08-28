@@ -13,7 +13,7 @@
 
 %% Class
 
-classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
+classdef InterlinkAcDcB2B < SimplusGT.Class.ModelAdvance
     
     % For temporary use
     properties(Access = protected)
@@ -44,17 +44,9 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
             % proper seen from the dc side.
             % Control schemes：Apparatus 2000&2001 → GFL
             %                  Apparatus 2002 → FFL-VFM
-            if obj.ApparatusType==2000 || obj.ApparatusType==2001 || obj.ApparatusType==2003
-                State = {'i_d','i_q','i_d_i','i_q_i','w_pll_i','w','theta','v_dc','v_dc_i','i'};
-            elseif obj.ApparatusType==2002 
-                State = {'i_d','i_q','v_dc','i','theta'}; 
-            elseif obj.ApparatusType==2005
-                State = {'i_d','i_q','i_d_i','i_q_i','v_d_i','v_q_i','theta','v_dc','v_dc_i','i'};
-            elseif obj.ApparatusType==2004 
-                State = {'i_d','i_q','i_d_i','i_q_i','v_d_i','v_q_i','theta','v_dc','v_dc_i','i','i_i','v_lk','v_lk_i','p_sum_i','p_lk_i'};
-            else
-                error('Error: Invalid ApparatusType.');
-            end
+
+
+            State = {'i_d','i_q','i_d_i','i_q_i','v_d_i','v_q_i','theta','v_dc','v_dc_i','i','i_i','v_lk','v_lk_i','p_sum_i','p_lk_i'};
         	Input = {'v_d','v_q','v','ang_r'};
             Output = {'i_d','i_q','i','w','v_dc','theta'};
         end
@@ -113,19 +105,10 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
             obj.i_q_r = i_q_r;
 
             % Get equilibrium
-            if obj.ApparatusType==2000 || obj.ApparatusType==2001 || obj.ApparatusType==2003
-            	x_e = [i_d; i_q; i_d_i; i_q_i; w_pll_i; w; theta; v_dc; v_dc_i; i];
-            	u_e = [v_d; v_q; v; ang_r];
-            elseif obj.ApparatusType==2005
-            	x_e = [i_d; i_q; i_d_i; i_q_i; v_d_i; v_q_i; theta; v_dc; v_dc_i; i];
-            	u_e = [v_d; v_q; v; ang_r];
-            elseif obj.ApparatusType==2004 
+
             	x_e = [i_d; i_q; i_d_i; i_q_i; v_d_i; v_q_i; theta; v_dc; v_dc_i; i; i_i; v_lk; p_sum_i; p_lk_i];
             	u_e = [v_d; v_q; v; ang_r]; 
-            elseif obj.ApparatusType==2002
-                x_e = [i_d; i_q; v_dc; i; theta];
-            	u_e = [v_d; v_q; v; ang_r];
-            end
+
                    
         end
 
@@ -170,10 +153,10 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
             ki_i_dq = L_ac * w_i^2 /4;
             kp_v_dq = 1/(16*w_i*L_ac);
             ki_v_dq = 1/(4*L_ac);
-            % kp_v_lk = 
-            % ki_v_lk = 
-            % D_dc    =
-            % D_ac    =
+            kp_v_lk = 
+            ki_v_lk = 
+            D_dc    =
+            D_ac    =
             kp_pll = w_pll;
             ki_pll = kp_pll * w_pll/4;
             tau_pll = 1/w_tau_pll;
@@ -190,29 +173,8 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
                 ki_v_dq = w_v_dq^2*Cf/4*50;
             end
             % Get states
-            if obj.ApparatusType==2000 || obj.ApparatusType==2001 || obj.ApparatusType==2003
-                i_d   	= x(1);
-                i_q   	= x(2);
-                i_d_i  	= x(3);
-                i_q_i 	= x(4);
-                w_pll_i = x(5);
-                w       = x(6);
-                theta   = x(7);
-                v_dc  	= x(8);
-                v_dc_i 	= x(9);
-                i       = x(10);
-            elseif obj.ApparatusType==2005
-                i_d     = x(1);
-                i_q     = x(2);
-                i_d_i   = x(3);
-                i_q_i   = x(4);
-                v_d_i   = x(5);
-                v_q_i   = x(6);
-                theta   = x(7);
-                v_dc    = x(8);
-                v_dc_i  = x(9);
-                i       = x(10);
-            elseif obj.ApparatusType==2004
+
+
                 i_d     = x(1); 
                 i_q     = x(2);
                 i_d_i   = x(3);
@@ -227,13 +189,7 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
                 v_lk    = x(11);
                 p_sum_i = x(12);
                 p_lk_i  = x(13);
-            elseif obj.ApparatusType==2002
-                i_d   = x(1);
-                i_q   = x(2);
-                v_dc  = x(3);
-                i     = x(4);
-                theta = x(5);
-            end
+
    
             % Get input
             v_d    = u(1);
@@ -246,112 +202,7 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
             % y     = g(x,u)
 
             % ### Call state equation: dx/dt = f(x,u)
-            if obj.ApparatusType==2000 || obj.ApparatusType==2001 || obj.ApparatusType==2003
-                % Dc-link voltage control
-                v_dc_r = Vg_dc;
-                if obj.ApparatusType==2000
-                    dv_dc_i = 0;
-                elseif obj.ApparatusType==2001 || obj.ApparatusType==2003
-                    dv_dc_i = (v_dc_r - v_dc)*ki_v_dc;
-                end
 
-                % Ac current control
-                if obj.ApparatusType==2000
-                    i_d_r = P_ac/Vg_ac;
-                elseif obj.ApparatusType==2001 || obj.ApparatusType==2003
-                    i_d_r = (v_dc_r - v_dc)*kp_v_dc + v_dc_i;
-                end
-                i_q_r = obj.i_q_r;                  % Constant iq
-                di_d_i = -(i_d_r - i_d)*ki_i_dq;
-                di_q_i = -(i_q_r - i_q)*ki_i_dq;
-
-                % Ac voltage (duty cycle*v_dc)
-                e_d_r = -(i_d_r - i_d)*kp_i_dq + i_d_i;
-                e_q_r = -(i_q_r - i_q)*kp_i_dq + i_q_i;
-
-                % Modulation
-                if obj.ApparatusType==2000 ||  obj.ApparatusType==2001
-                    e_d = e_d_r;
-                    e_q = e_q_r;
-                elseif obj.ApparatusType==2003
-                    e_d = e_d_r/V_dc*v_dc;
-                    e_q = e_q_r/V_dc*v_dc;
-                end
-
-                % Ac-side L filter
-                di_d = (v_d - R_ac*i_d + w*L_ac*i_q - e_d)/L_ac;
-                di_q = (v_q - R_ac*i_q - w*L_ac*i_d - e_q)/L_ac;
-
-                % PLL
-                e_ang = v_q - ang_r;
-                dw_pll_i = e_ang*ki_pll;
-                dw = (w_pll_i + e_ang*kp_pll - w)/tau_pll;
-                dtheta = w;
-
-                % Dc-side inductor
-                d_i = (v - v_dc - R_dc*i)/L_dc;
-
-                % Dc-side capacitor
-                dv_dc = ((e_d*i_d + e_q*i_q)/v_dc + i)/C_dc;
-
-            elseif obj.ApparatusType==2005
-                % Dc-link voltage control
-                v_dc_r = Vg_dc;
-                dv_dc_i = (v_dc_r - v_dc)*ki_v_dc;
-                w = (v_dc_r - v_dc)*kp_v_dc + v_dc_i + W0;
-                v_d_r = 1;
-                v_q_r = 0;
-                % AC Voltage Control
-                error_v_d = v_d_r - v_d;
-              	error_v_q = v_q_r - v_q;
-                dv_d_i = error_v_d*ki_v_dq;
-                dv_q_i = error_v_q*ki_v_dq;
-                i_d_r = -(error_v_d*kp_v_dq + v_d_i);
-                i_q_r = -(error_v_q*kp_v_dq + v_q_i);
-
-                % AC Current Control
-                error_i_d = i_d_r-i_d;
-                error_i_q = i_q_r-i_q;
-                di_d_i = -error_i_d*ki_i_dq;
-                di_q_i = -error_i_q*ki_i_dq;
-                e_d = -error_i_d*kp_i_dq + i_d_i;
-                e_q = -error_i_q*kp_i_dq + i_q_i;   
-
-                % Ac-side L filter
-                di_d = (v_d - R_ac*i_d + w*L_ac*i_q - e_d)/L_ac;
-                di_q = (v_q - R_ac*i_q - w*L_ac*i_d - e_q)/L_ac;
-
-                % PLL
-                % e_ang = v_q - ang_r;
-                % dw_pll_i = e_ang*ki_pll;
-                % dw = (w_pll_i + e_ang*kp_pll - w)/tau_pll;
-                dtheta = w;
-
-                % Dc-side inductor
-                d_i = (v - v_dc - R_dc*i)/L_dc;
-
-                % Dc-side capacitor
-                dv_dc = ((e_d*i_d + e_q*i_q)/v_dc + i)/C_dc;
-
-            elseif obj.ApparatusType==2002
-                % Voltage control (open loop)
-                e_d = 1;
-                e_q = 0;
-
-                % Matching control
-                p1 = (e_d*i_d + e_q*i_q)*(-1);
-                pr1 = v_dc*i;
-                dv_dc = (pr1 - p1)/v_dc/C_dc;
-                w = ((pr1 - p1)/v_dc*R + K*(v_dc - v_dc_ref))*N*W0 + W0;
-                dtheta = w;
-
-                % Rectifier-side inductor
-                di_d = (v_d - e_d + w*L_ac*i_q - R_ac*i_d)/L_ac;
-                di_q = (v_q - e_q - w*L_ac*i_d - R_ac*i_q)/L_ac;
-                % DC Line
-                d_i = (v - v_dc -i*R_dc)/L_dc;
-
-            elseif obj.ApparatusType==2004
                 f_ac_nom = W0/2/pi;  
                 v_dc_nom = 1;
                 v_d_r = 1;
@@ -409,21 +260,10 @@ classdef InterlinkAcDc < SimplusGT.Class.ModelAdvance
                 % Dc-side inductor
                 d_i = (v - v_dc - R_dc*i)/L_dc;
 
-            end
+
             if CallFlag == 1
-                if obj.ApparatusType==2000 || obj.ApparatusType==2001 || obj.ApparatusType==2003
-                    f_xu = [di_d; di_q; di_d_i; di_q_i; dw_pll_i; dw; dtheta; dv_dc; dv_dc_i; d_i];
-                    Output = f_xu;
-                elseif obj.ApparatusType==2002
-                    f_xu = [di_d; di_q; dv_dc; d_i; dtheta];
-                    Output = f_xu;
-                elseif obj.ApparatusType==2005
-                    f_xu = [di_d; di_q; di_d_i; di_q_i; dv_d_i; dv_q_i; dtheta; dv_dc; dv_dc_i; d_i];
-                    Output = f_xu;    
-                elseif obj.ApparatusType==2004
                     f_xu = [di_d; di_q; di_d_i; di_q_i; dv_d_i; dv_q_i; dtheta; dv_dc; dv_dc_i; di; di_i, dv_lk, dp_sum_i, dp_lk_i];
                     Output = f_xu;
-                end
             elseif CallFlag == 2
               	% ### Call output equation: y = g(x,u)
                 g_xu = [i_d; i_q; i; w; v_dc; theta];

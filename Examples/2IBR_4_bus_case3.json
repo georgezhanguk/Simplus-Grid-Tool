@@ -4,7 +4,7 @@
   "Basic": 
 {
 
-    "Fs": 125000,
+    "Fs": 120000,
     "Fbase": 50,
     "Sbase": 1,
     "Vbase": 1
@@ -34,14 +34,14 @@
 
       "BusNo": 1,
       "BusType": 1,
-      "Voltage": 1,
+      "Voltage": 0.995,
       "Theta": 0,
-      "PGi": 1,
+      "PGi": 0,
       "QGi": 0,
       "PLi": 0,
       "QLi": 0,
-      "Qmin": -1,
-      "Qmax": 1,
+      "Qmin": -10,
+      "Qmax": 10,
       "AreaNo": 1,
       "AcDc": 1
     
@@ -54,12 +54,12 @@
       "BusType": 3,
       "Voltage": 1,
       "Theta": 0,
-      "PGi": -0.5,
+      "PGi": 0.32,
       "QGi": 0,
-      "PLi": 0.5,
+      "PLi": 0.1,
       "QLi": 0,
-      "Qmin": -1,
-      "Qmax": 1,
+      "Qmin": -10,
+      "Qmax": 10,
       "AreaNo": 1,
       "AcDc": 1
     
@@ -69,17 +69,17 @@
 {
 
       "BusNo": 3,
-      "BusType": 1,
+      "BusType": 3,
       "Voltage": 1,
       "Theta": 0,
-      "PGi": 0.5,
+      "PGi": 0.32,
       "QGi": 0,
-      "PLi": 0.5,
+      "PLi": 0.1,
       "QLi": 0,
-      "Qmin": -1,
-      "Qmax": 1,
-      "AreaNo": 2,
-      "AcDc": 2
+      "Qmin": -10,
+      "Qmax": 10,
+      "AreaNo": 1,
+      "AcDc": 1
     
 }
 ,
@@ -90,14 +90,14 @@
       "BusType": 3,
       "Voltage": 1,
       "Theta": 0,
-      "PGi": 0.5,
+      "PGi": 0,
       "QGi": 0,
-      "PLi": 0.5,
+      "PLi": 0.1,
       "QLi": 0,
-      "Qmin": -1,
-      "Qmax": 1,
-      "AreaNo": 2,
-      "AcDc": 2
+      "Qmin": -10,
+      "Qmax": 10,
+      "AreaNo": 1,
+      "AcDc": 1
     
 }
 
@@ -110,10 +110,10 @@
     
 {
 
-      "FromBus": 1,
+      "FromBus": 4,
       "ToBus": 2,
-      "R": 0.01,
-      "wL": 0.3,
+      "R": 0.02,
+      "wL": 0.2,
       "wC": 0,
       "G": 0,
       "TurnsRatio": 1
@@ -123,24 +123,24 @@
     
 {
 
-      "FromBus": 3,
+      "FromBus": 4,
+      "ToBus": 3,
+      "R": 0.02,
+      "wL": 0.2,
+      "wC": 0,
+      "G": 0,
+      "TurnsRatio": 1
+    
+}
+,
+    
+{
+
+      "FromBus": 1,
       "ToBus": 4,
       "R": 0.01,
-      "wL": 0.3,
+      "wL": 0.1,
       "wC": 0,
-      "G": 0,
-      "TurnsRatio": 1
-    
-}
-,
-    
-{
-
-      "FromBus": 1,
-      "ToBus": 1,
-      "R": "NaN",
-      "wL": "NaN",
-      "wC": 0.0001,
       "G": 0,
       "TurnsRatio": 1
     
@@ -153,7 +153,7 @@
       "ToBus": 2,
       "R": "NaN",
       "wL": "NaN",
-      "wC": 0.0001,
+      "wC": 0.3,
       "G": 0,
       "TurnsRatio": 1
     
@@ -166,20 +166,7 @@
       "ToBus": 3,
       "R": "NaN",
       "wL": "NaN",
-      "wC": 0.0001,
-      "G": 0,
-      "TurnsRatio": 1
-    
-}
-,
-    
-{
-
-      "FromBus": 4,
-      "ToBus": 4,
-      "R": "NaN",
-      "wL": "NaN",
-      "wC": 0.0001,
+      "wC": 0.3,
       "G": 0,
       "TurnsRatio": 1
     
@@ -204,10 +191,10 @@
       "Para": 
 {
 
-        "J": 3.5,
+        "J": 10,
         "D": 1,
-        "wL": 0.05,
-        "R": 0.01,
+        "wL": 0.005,
+        "R": 0.0005,
         "w0": 314.15926535897933
       
 }
@@ -218,31 +205,43 @@
     
 {
 
-      "BusNo": 
-[
-
-        2,
-        3
-      
-]
-,
-      "Type": 2001,
+      "BusNo": 2,
+      "Type": 10,
       "Para": 
 {
 
-        "C_dc": 1.6,
-        "wL_ac": 0.05,
-        "R_ac": 0.01,
-        "wL_dc": 0.02,
-        "R_dc": 0.004,
-        "fidq": 600,
-        "fvdc": 5,
-        "fpll": 5,
-        "w0": 314.15926535897933,
-        "R": 0.05,
-        "K": 1,
-        "N": 1,
-        "v_dc_ref": 1
+        "V_dc": 2.5,
+        "C_dc": 1.25,
+        "f_v_dc": 6,
+        "wLf": 0.03,
+        "R": 0.001,
+        "f_pll": 22,
+        "f_tau_pll": 300,
+        "f_i_dq": 400,
+        "w0": 314.15926535897933
+      
+}
+
+    
+}
+,
+    
+{
+
+      "BusNo": 3,
+      "Type": 10,
+      "Para": 
+{
+
+        "V_dc": 2.5,
+        "C_dc": 1.25,
+        "f_v_dc": 6,
+        "wLf": 0.03,
+        "R": 0.001,
+        "f_pll": 10,
+        "f_tau_pll": 300,
+        "f_i_dq": 1500,
+        "w0": 314.15926535897933
       
 }
 
@@ -253,19 +252,11 @@
 {
 
       "BusNo": 4,
-      "Type": 1010,
+      "Type": 100,
       "Para": 
-{
+[
 
-        "Vdc": 2,
-        "Cdc": 0.8,
-        "wL": 0.05,
-        "R": 0.01,
-        "fi": 600,
-        "fvdc": 5,
-        "w0": 314.15926535897933
-      
-}
+]
 
     
 }

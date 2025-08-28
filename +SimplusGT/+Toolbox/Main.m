@@ -188,7 +188,7 @@ if isproper(GsysDss)
     ObjGsysSs = SimplusGT.ObjDss2Ss(ObjGsysDss);
     [~,GsysSs] = ObjGsysSs.GetSS(ObjGsysSs);
     % GsysMin = minreal(GsysSs);
-else
+else   
     error('Error: GsysDss is improper, which has more zeros than poles.')
 end
 
@@ -281,7 +281,14 @@ if UserDataStruct.Advance.EnablePlotAdmittance
 else
     fprintf('Warning: The plot of admittance spectrum is disabled.\n')
 end
-
+%% Save figure
+% Define folder and filename
+% folder = '"C:\Users\gzhan\Documents\Imperial College London\PhD Year 1\Hybrid ACDC\Simplus-Grid-Tool-2025May_HybridACDC\Data\DC Case Study"'; % change to your folder
+% % filename = 'BaselineY_dd.png'; % can be .fig, .jpg, .pdf, etc.
+% set(gcf,'Position',[100 100 600 500])
+% % Full file path
+% %fullFileName = fullfile(folder, filename);
+% exportgraphics(gcf, 'baselineY_dd.png', 'Resolution',500); % 300 dpi
 %%
 % ==================================================
 % Grid Strength Analysis
@@ -392,6 +399,7 @@ function PlotPoleMap(EigVecHz,FigN)
     title('Zoomed pole map');
     axis([-80,20,-150,150]);
 end
+%% Plot Admittance Spectrum
 
 %%
 % Plot impedance spectrum
@@ -421,19 +429,23 @@ function PlotAdmittanceSpectrum(NumBus,ApparatusBus,ApparatusType,GsysSs,PortBus
             YcellSym{k} = SimplusGT.ss2sym(YcellSs{k});
             YcellSsCplx{k} = T*YcellSs{k}*T^(-1);
             YcellSymCplx{k} = SimplusGT.ss2sym(YcellSsCplx{k});
-            
+
             figure(FigN);
             SimplusGT.bode_c(YcellSym{k}(1,1),1j*OmegaP,'PhaseOn',1); 
+
             figure(FigN+1);
             SimplusGT.bode_c(YcellSymCplx{k}(1,1),1j*OmegaPN,'PhaseOn',1); 
             
             CountLegend = CountLegend + 1;
-            VecLegend{CountLegend} = ['Bus',num2str(k)];
+            VecLegend{CountLegend} = ['Bus ',num2str(k)];
         end
     end
  	figure(FigN)
-  	SimplusGT.mtit('Transfer Function Matrix dq frame: Y_{dd}');
+  	SimplusGT.mtit('Transfer Function Matrix dc frame: Y_{dc}');
+    %legend("Y_{sys}^{22,dd}", "Y_{sys}^{33,dc}")
     legend(VecLegend);
+    % p(1).ylabel("Magnitude")
+    xlabel("Frequency (Hz)")
   	figure(FigN+1)
   	SimplusGT.mtit('Complex Vector dq frame: Y_{dq+}');
     legend(VecLegend);
@@ -470,3 +482,6 @@ function PlotGridStrength(ApparatusType,ListLine,FigN)
     title('Grid Strength')
 
 end
+%%
+ApparatusImpedancePlot(GmDssCell,2,ApparatusType);
+%ApparatusImpedancePlot(GmDssCell,2,ApparatusType);
