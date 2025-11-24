@@ -1,4 +1,4 @@
-function ApparatusImpedancePlot(GmDssCell, ApparatusImpedancePlotSelect, ApparatusType)
+function ApparatusImpedancePlot(GmssCell, ApparatusImpedancePlotSelect, ApparatusType,FigureNo)
 %% Plot Impedance Spectrum of Apparatus
 % ApparatusBus
 % ApparatusType
@@ -6,7 +6,8 @@ k = ApparatusImpedancePlotSelect;
 % Set frequency range 
 OmegaP = logspace(-1,4,500)*2*pi;
 OmegaPN = [-flip(OmegaP),OmegaP];
-ApparatusSSModel = dss2ss(GmDssCell{k});
+ApparatusSSModel = dss2ss(GmssCell);
+% ApparatusSSModel = GmssCell;
 ApparatusSymModel =  SimplusGT.ss2sym(ApparatusSSModel);
 if ApparatusType{k} <= 89 % AC apparatus
     size = 2;
@@ -15,8 +16,8 @@ elseif ApparatusType{k} >= 1000 && ApparatusType{k} <= 1089 % Dc apparatus
 elseif ApparatusType{k} >= 2000 && ApparatusType{k} <= 2009 % Interlink apparatus
     size = 3;
 end
-title1 = ["Ydd","Ydq","Yddc","Yqd","Yqq","Yqdc","Ydcd","Ydcq","Ydcdc"];   
-figure(ApparatusImpedancePlotSelect*1000);
+title1 = ["Y_{dd}","Y_{dq}","Y_{ddc}","Y_{qd}","Y_{qq}","Y_{qdc}","Y_{dcd}","Y_{dcq}","Y_{dcdc}"];   
+figure(FigureNo);
 for i = 1:size
     for u = 1:size
         subplot(3,3,3*(i-1)+u)

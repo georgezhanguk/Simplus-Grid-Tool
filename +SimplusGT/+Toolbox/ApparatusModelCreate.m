@@ -24,7 +24,7 @@
 % function." IEEE Transctions on Circuit and Systems, 2020.
 
 %% function
-function [GmObj,GmDSS,ApparatusPara,ApparatusEqui,DiscreDampingResistor,OtherInputs,StateStr,InputStr,OutputStr] ...
+function [GmObj,GmDSS,ApparatusPara,ApparatusEqui,DiscreDampingResistor,OtherInputs,StateStr,InputStr,OutputStr, Gm2, Gm3] ...
         = ApparatusModelCreate(ApparatusBus,Type,PowerFlow,Para,Ts,ListBus) 
 
 %% Create an object
@@ -239,7 +239,7 @@ end
 
 % Get the swing frame system model
 Gm = ModelSS;   
-
+Gm2 = Gm;
 % Output
 ApparatusPara = Apparatus.Para; 
 ApparatusEqui = {x_e,u_e,y_e,xi};
@@ -253,7 +253,7 @@ if Type<90 || (1000<=Type && Type<1090) || (2000<=Type && Type<2090)
 else
     DiscreDampingResistor = -1;
 end
-
+Gm3=0;
 %% Check if the apparatus needs to adjust its frame
 if (Type>=90 && Type<1000)
     % No need for frame dynamics embedding
@@ -331,7 +331,7 @@ Se = feedback(Se,Sfb,[1,2],[1]);            % v = v' - V0 * w/s
 [~,~,ly2_w] = SimplusGT.SsGetDim(Se);
 Sff = ss([],[],[],[[I0;zeros((ly2_w-3),1)],eye(ly2_w-1)]);
 Se = series(Se,Sff);                        % i' = i + I0 * w/s
-
+Gm3 = Se;
 %% Impedance transformation: local steady frame d'q' -> global steady frame D'Q'
 % Effect of frame alignment on arbitrary signal udq:
 % Complex vector dq frame:

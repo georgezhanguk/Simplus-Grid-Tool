@@ -19,7 +19,7 @@
     "DiscretizationDampingFlag": 1,
     "DirectFeedthrough": 0,
     "PowerFlowAlgorithm": 1,
-    "EnableCreateSimulinkModel": 1,
+    "EnableCreateSimulinkModel": 0,
     "EnablePlotPole": 1,
     "EnablePlotAdmittance": 1,
     "EnablePrintOutput": 1
@@ -200,14 +200,20 @@
 {
 
       "BusNo": 1,
-      "Type": 0,
+      "Type": 20,
       "Para": 
 {
 
-        "J": 3.5,
-        "D": 1,
-        "wL": 0.05,
-        "R": 0.01,
+        "wLf": 0.05,
+        "Rf": 0.01,
+        "wCf": 0.02,
+        "wLc": 0.01,
+        "Rc": 0.002,
+        "Xov": 0.01,
+        "Dw": 0.05,
+        "fdroop": 5,
+        "fvdq": 300,
+        "fidq": 600,
         "w0": 314.15926535897933
       
 }

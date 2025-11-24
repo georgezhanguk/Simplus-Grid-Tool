@@ -158,7 +158,7 @@ for i = 1:NumApparatus
     
     % The following data may not used in the script, but will be used in
     % simulations. So, do not delete!
-    [ObjGmCell{i},GmDssCell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}] = ...
+    [ObjGmCell{i},GmDssCell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}, Gm2{i}, Gm3{i}] = ...
         SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{i},ApparatusType{i},ApparatusPowerFlow{i},Para{i},Ts,ListBusNew);
     x_e{i} = ApparatusEqui{i}{1};
     u_e{i} = ApparatusEqui{i}{2};
@@ -482,6 +482,141 @@ function PlotGridStrength(ApparatusType,ListLine,FigN)
     title('Grid Strength')
 
 end
+
+%% GFL Comparison - Theoretical vs Simplus Calculated
+theoreticalss = TheoreticalImpedancePlotGFL(x_e, u_e, Para, ApparatusPowerFlow, 2);
+Y_ss_theory = theoreticalss(1:2,1:2);
+Y_ss_simpluslocal = Gm2{2}(1:2,1:2);
+
+Y_ss_theory_freq = freqresp(Y_ss_theory, w_r);
+Y_ss_simpluslocal_freq = freqresp(Y_ss_simpluslocal, w_r);
+figure(111); clf;
+freqresp_bode_cpr(Y_ss_simpluslocal_freq, Y_ss_theory_freq, w_r, 111, '', ...
+    'LineWidth', 1, 'XLim',[2 400], ...  % applies to both, unless overridden below
+    'ScanArgs', {'LineWidth', 1.2,'LineStyle','-'}, ...
+    'RefArgs',  {'LineWidth', 1.2});
+freqresp_bode_cpr(YA, [], w_r, 111, 'x', ...
+    'LineWidth', 1, 'XLim',[2 400], ...  % applies to both, unless overridden below
+    'ScanArgs', {'LineWidth', 1.2}, ...
+    'RefArgs',  {'LineWidth', 1.2});
+% legend("Theoretical")
+
+%% GFL Comparison - Theoretical vs Simplus Calculated
+theoreticalss = TheoreticalImpedancePlotGFL(x_e, u_e, Para, ApparatusPowerFlow, 2);
+Y_ss_theory = theoreticalss(1:2,1:2);
+Y_ss_simpluslocal = Gm2{2}(1:2,1:2);
+
+Y_ss_theory_freq = freqresp(Y_ss_theory, w_r);
+Y_ss_simpluslocal_freq = freqresp(Y_ss_simpluslocal, w_r);
+Z_ss_theory_freq = pageinv(Y_ss_theory_freq);
+Z_ss_simpluslocal_freq = pageinv(Y_ss_simpluslocal_freq);
+% YA_current = pageinv(ZA);
+figure(112); clf;
+freqresp_bode_cpr(Z_ss_simpluslocal_freq, Z_ss_theory_freq, w_r, 112, '', ...
+    'LineWidth', 1, 'XLim',[2 400], ...  % applies to both, unless overridden below
+    'ScanArgs', {'LineWidth', 1.2,'LineStyle','-'}, ...
+    'RefArgs',  {'LineWidth', 1.2});
+freqresp_bode_cpr(ZA, [], w_r, 112, 'x', ...
+    'LineWidth', 1, 'XLim',[2 400], ...  % applies to both, unless overridden below
+    'ScanArgs', {'LineWidth', 1.2}, ...
+    'RefArgs',  {'LineWidth', 1.2});
+% legend("Theoretical")
+%% 
+figure(2000)
+ApparatusImpedancePlot(Gm2{2},2,ApparatusType,2000);
+ApparatusImpedancePlot(GmDssCell{2},2,ApparatusType,2000);
+ApparatusImpedancePlot(theoreticalss,2,ApparatusType,2000);
+legend("Local","Global","Theoretical")
 %%
-ApparatusImpedancePlot(GmDssCell,2,ApparatusType);
+theoreticalss = TheoreticalImpedancePlot(x_e, u_e, Para, ApparatusPowerFlow, 2, ApparatusType);
+% theoreticalss.A(8,2)=-0.016647667616608;
+%theoreticalss.A(8,1)=0.780700481803390;
+% theoreticalss.B(6,2)=3.947841757741189e+04;
+% theoreticalss.B(6,4)=-3.947841757741189e+04;
+theoreticalss.A-Gm2{1,2}.A
+ApparatusImpedancePlot(theoreticalss,2,ApparatusType,2000);
+%%
+figure(5)
+bode(theoreticalss(1:3,3))
+%%
+inv_A = inv(theoreticalss.A)
+%%
+
+ApparatusImpedancePlot(GmDssCell{1,2},2,ApparatusType,2000);
 %ApparatusImpedancePlot(GmDssCell,2,ApparatusType);
+%%
+figure(203)
+subplot(2,2,1);
+xlabel("Frequency (Hz)")
+Ydd = (IdD.*VqQ - IdQ.*VqD)./ (VdD.*VqQ - VdQ.*VqD);
+plot(w_r/2/pi,(abs(Ydd)),'LineWidth',1.5,'Marker','x')
+%%
+subplot(2,2,2);
+xlabel("Frequency (Hz)")
+plot(w_r/2/pi,(abs(IdQ)),'LineWidth',1.5,'Marker','x')
+subplot(2,2,3);
+xlabel("Frequency (Hz)")
+plot(w_r/2/pi,(abs(IdQ)),'LineWidth',1.5,'Marker','x')
+subplot(2,2,4);
+plot(w_r/2/pi,(abs(IqQ)),'LineWidth',1.5,'Marker','x')
+xlabel("Frequency (Hz)")
+%%
+figure(203)
+subplot(2,2,1);
+xlabel("Frequency (Hz)")
+%Ydd = (IdD.*VqQ - IdQ.*VqD) ./ (VdD.*VqQ - VdQ.*VqD);
+plot(w_r(1:16)/2/pi,(abs(IdD)),'LineWidth',1.5,'Marker','x')
+xlim([10 1e4])
+%%
+subplot(2,2,2);
+xlabel("Frequency (Hz)")
+plot(w_r/2/pi,(abs(FS_Final.dq)),'LineWidth',1.5,'Marker','x')
+xlim([10 1e4])
+subplot(2,2,3);
+xlabel("Frequency (Hz)")
+plot(w_r/2/pi,(abs(FS_Final.qd)),'LineWidth',1.5,'Marker','x')
+xlim([10 1e4])
+subplot(2,2,4);
+plot(w_r/2/pi,(abs(FS_Final.qq)),'LineWidth',1.5,'Marker','x')
+xlabel("Frequency (Hz)")
+xlim([10 1e4])
+%%
+fprintf('Plot admittance spectrum...\n')
+FigN = 203;
+% Set frequency range 
+OmegaP = logspace(-1,4,500)*2*pi;
+OmegaPN = [-flip(OmegaP),OmegaP];
+CountLegend = 0;
+VecLegend = {};
+    
+     
+
+        k=2;
+        k2=k;
+        % Plot the active bus admittance only
+        if (0<=ApparatusType{k2} && ApparatusType{k2}<90) || ...
+           (1000<=ApparatusType{k2} && ApparatusType{k2}<1090) || ...
+           (2000<=ApparatusType{k2} && ApparatusType{k2}<2090)
+       
+           	YcellSs{k}  = GsysSs(PortBusI{k},PortBusV{k});
+            YcellSym{k} = SimplusGT.ss2sym(YcellSs{k});
+
+            figure(FigN);
+        for i = 1:2
+            for j = 1:2
+                subplot(2,2,(i-1)*2 + j);
+                SimplusGT.bode_c(YcellSym{k}(i,j), 1j*OmegaP, 'PhaseOn', 0);
+            end
+        end
+           
+        end
+ 	% figure(FigN)
+  	% SimplusGT.mtit('Transfer Function Matrix dc frame: Y_{dc}');
+    % %legend("Y_{sys}^{22,dd}", "Y_{sys}^{33,dc}")
+    % legend(VecLegend);
+    % % p(1).ylabel("Magnitude")
+    % xlabel("Frequency (Hz)")
+  	% figure(FigN+1)
+  	% SimplusGT.mtit('Complex Vector dq frame: Y_{dq+}');
+    % legend(VecLegend);
+    % PlotAdmittanceSpectrum(NumBus,ApparatusBus,ApparatusType,GsysSs,PortBusI,PortBusV,FigN);

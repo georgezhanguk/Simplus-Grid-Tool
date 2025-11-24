@@ -274,7 +274,7 @@ classdef GridFollowingVSI < SimplusGT.Class.ModelAdvance
             end
             
             dtheta = w;
-            
+            % dtheta = W0;
             
             % Ac current control
             if 1                                                                        
