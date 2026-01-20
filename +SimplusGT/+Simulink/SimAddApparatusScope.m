@@ -20,9 +20,12 @@ for i = 1:N_Apparatus
         set_param(gcb,'Orientation','left');
         Pos_DS_Bus{i} = Pos_Apparatus{i} + Shift_DS_Bus;
         set_param(gcb,'position',[Pos_DS_Bus{i},Pos_DS_Bus{i}+Size_DS_Bus]);
-        if ApparatusType{i}<=90
+        if ApparatusType{i}<80 || ApparatusType{i}==90
             Output_DS_Bus = ['v_dq,i_dq,v_abc,i_abc,w,theta,pq'];
             Length_D_Measurement = 7;
+        elseif 80<=ApparatusType{i} && ApparatusType{i}<90
+            Output_DS_Bus = ['v_dq,i_dq,v_abc,i_abc,w,pq'];
+            Length_D_Measurement = 6;
         elseif 1000<=ApparatusType{i} && ApparatusType{i}<=1090
             Output_DS_Bus = ['v,i,p'];
             Length_D_Measurement = 3;

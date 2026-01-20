@@ -201,7 +201,11 @@ Para0040.v_pv_ref =0.8;   % pv output voltage(MPPT)
 Para0040.v_dc_ref =1;   % dc voltage 
 Para0040.fvdc     =100; % (Hz) vdc bandwidth
 Para0040.fidc     =500; % (Hz) ibat bandwidth
- 
+% ======================================
+% Passive AC Load (RL)
+% ======================================
+Para0080.R = 1; 
+Para0080.L = 1e-3; 
 
 % ======================================
 % Ac infinite bus (short-circuit in small-signal)
@@ -276,7 +280,8 @@ for i = 1:N_App
             ParaCell{i} = Para0030;     % Battery Energy Storage System
         case 4
             ParaCell{i} = Para0040;     % Photovoltaic
-            % PV
+        case 8
+            ParaCell{i} = Para0080;     % AC RL Passive Load
         case 9
             ParaCell{i} = Para0090;     % Ac inifnite bus
         case 10
@@ -390,6 +395,13 @@ for i = 1:length(row)
             case 15; ParaCell{row(i)}.v_dc_ref = UserValue;    
             case 16; ParaCell{row(i)}.fvdc     = UserValue; 
             case 17; ParaCell{row(i)}.fidc     = UserValue;  
+            otherwise
+                error(['Error: parameter overflow, bus ' num2str(AppBus) 'type ' num2str(AppType) '.']);
+        end
+    elseif floor(AppType/10) == 8                % AC Passive Load
+        switch SwitchFlag
+            case 1;  ParaCell{row(i)}.R       = UserValue;
+            case 2;  ParaCell{row(i)}.L       = UserValue;
             otherwise
                 error(['Error: parameter overflow, bus ' num2str(AppBus) 'type ' num2str(AppType) '.']);
         end

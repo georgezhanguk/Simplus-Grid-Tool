@@ -40,7 +40,7 @@
 %     semilogx(w_f, mag1, shape, 'DisplayName', o.LegendStrings{1}, commonArgs{:}, o.ScanArgs{:}); hold on;
 %     semilogx(w_f, mag2,        'DisplayName', o.LegendStrings{2}, commonArgs{:}, o.RefArgs{:});
 %     ylabel('Magnitude (dB)'); legend('show'); if ~isempty(o.XLim), xlim(o.XLim); end; grid on;
-%     title('Z_{dd}')
+%     title('Y_{dd}')
 % 
 %     % ===== (1,1) PHASE =====
 %     subplot(4,2,3)
@@ -62,7 +62,7 @@
 %     semilogx(w_f, mag1, shape, 'DisplayName', o.LegendStrings{1}, commonArgs{:}, o.ScanArgs{:}); hold on;
 %     semilogx(w_f, mag2,        'DisplayName', o.LegendStrings{2}, commonArgs{:}, o.RefArgs{:});
 %     ylabel('Magnitude (dB)'); if ~isempty(o.XLim), xlim(o.XLim); end; grid on;
-%     title('Z_{dq}')
+%     title('Y_{dq}')
 %     % ===== (1,2) PHASE =====
 %     subplot(4,2,4)
 %     phase_deg1 = rad2deg(unwrap(angle(z1)));
@@ -83,7 +83,7 @@
 %     semilogx(w_f, mag1, shape, 'DisplayName', o.LegendStrings{1}, commonArgs{:}, o.ScanArgs{:}); hold on;
 %     semilogx(w_f, mag2,        'DisplayName', o.LegendStrings{2}, commonArgs{:}, o.RefArgs{:});
 %     ylabel('Magnitude (dB)'); if ~isempty(o.XLim), xlim(o.XLim); end; grid on;
-%     title('Z_{qd}')
+%     title('Y_{qd}')
 % 
 %     % ===== (2,1) PHASE =====
 %     subplot(4,2,7)
@@ -104,7 +104,7 @@
 %     semilogx(w_f, mag1, shape, 'DisplayName', o.LegendStrings{1}, commonArgs{:}, o.ScanArgs{:}); hold on;
 %     semilogx(w_f, mag2,        'DisplayName', o.LegendStrings{2}, commonArgs{:}, o.RefArgs{:});
 %     ylabel('Magnitude (dB)'); if ~isempty(o.XLim), xlim(o.XLim); end; grid on;
-%     title('Z_{qq}')
+%     title('Y_{qq}')
 % 
 %     % ===== (2,2) PHASE =====
 %     subplot(4,2,8)
@@ -216,7 +216,7 @@ function freqresp_bode_cpr(h1, h2, w_r, fig_k, shape, varargin)
     if ~isempty(o.XLim), xlim(o.XLim); end
     style_axes();
     legend('show');
-    title('Z_{dd}')
+    title('Y_{dd}')
 
     % ================== Ydd PHASE ==================
     subplot(4,2,3); hold on;
@@ -251,7 +251,7 @@ function freqresp_bode_cpr(h1, h2, w_r, fig_k, shape, varargin)
     ylabel('Magnitude (dB)');
     if ~isempty(o.XLim), xlim(o.XLim); end
     style_axes();
-    title('Z_{dq}')
+    title('Y_{dq}')
 
     % ================== Ydq PHASE ==================
     subplot(4,2,4); hold on;
@@ -286,7 +286,7 @@ function freqresp_bode_cpr(h1, h2, w_r, fig_k, shape, varargin)
     ylabel('Magnitude (dB)');
     if ~isempty(o.XLim), xlim(o.XLim); end
     style_axes();
-    title('Z_{qd}')
+    title('Y_{qd}')
 
     % ================== Yqd PHASE ==================
     subplot(4,2,7); hold on;
@@ -321,7 +321,7 @@ function freqresp_bode_cpr(h1, h2, w_r, fig_k, shape, varargin)
     ylabel('Magnitude (dB)');
     if ~isempty(o.XLim), xlim(o.XLim); end
     style_axes();
-    title('Z_{qq}')
+    title('Y_{qq}')
 
     % ================== Yqq PHASE ==================
     subplot(4,2,8); hold on;

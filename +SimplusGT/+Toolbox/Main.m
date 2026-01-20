@@ -158,7 +158,7 @@ for i = 1:NumApparatus
     
     % The following data may not used in the script, but will be used in
     % simulations. So, do not delete!
-    [ObjGmCell{i},GmDssCell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}, Gm2{i}, Gm3{i}] = ...
+    [ObjGmCell{i},GmDssCell{i},ApparatusPara{i},ApparatusEqui{i},ApparatusDiscreDamping{i},OtherInputs{i},ApparatusStateStr{i},ApparatusInputStr{i},ApparatusOutputStr{i}, Gm{i}, Gm2{i}, Gm3{i}] = ...
         SimplusGT.Toolbox.ApparatusModelCreate(ApparatusBus{i},ApparatusType{i},ApparatusPowerFlow{i},Para{i},Ts,ListBusNew);
     x_e{i} = ApparatusEqui{i}{1};
     u_e{i} = ApparatusEqui{i}{2};
@@ -295,18 +295,18 @@ end
 % ==================================================
 %
 % Only support ac system analysis at this stage.
-%
-fprintf('\n')
-fprintf('==================================\n')
-fprintf('Grid Strength Analysis\n')
-fprintf('==================================\n')
-if isempty(FlagDcArea)
-    fprintf('Plot grid strength.\n')
-    FigN = 300;
-    PlotGridStrength(ApparatusType,ListLineNew,FigN);
-else
-    fprintf('Warning: The plot of grid strength is disabled.\n')
-end
+% %
+% fprintf('\n')
+% fprintf('==================================\n')
+% fprintf('Grid Strength Analysis\n')
+% fprintf('==================================\n')
+% if isempty(FlagDcArea)
+%     fprintf('Plot grid strength.\n')
+%     FigN = 300;
+%     PlotGridStrength(ApparatusType,ListLineNew,FigN);
+% else
+%     fprintf('Warning: The plot of grid strength is disabled.\n')
+% end
 
 %%
 % ==================================================

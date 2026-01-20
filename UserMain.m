@@ -1,4 +1,4 @@
-%% Readme
+ %% Readme
 %
 % Default 4-bus power system user data is saved in "UserData.xlsm" and
 % "UserData.json". More examples can be found in "Examples" folder.
@@ -18,6 +18,8 @@ UserDataName = 'UserData';      % Default 4-bus system
 UserDataName = 'GflInverterInfiniteBus';   	% Single grid-following inverter and infinite bus
 % UserDataName = 'GflInverterInfiniteBusNoLine';   	% Single grid-following inverter and infinite bus
 % UserDataName = 'GfmInverterInfiniteBus';   	% Single grid-forming inverter and infinite bus
+% UserDataName = 'RL_InfiniteBus';   	% Single grid-forming inverter and infinite bus
+
 % UserDataName = 'BessInfiniteBus';             % Single battery energy storage system and infinite bus
 % UserDataName = 'PVInfiniteBus';               % Single Photovoltaic and infinite bus
 % UserDataName = 'IEEE_14Bus';

@@ -1,5 +1,6 @@
 % This class defines the model of a single phase inductor for test.
-
+% The model is in 
+% ac-side: load convention, admittance form.
 % Author(s): Yitong Li
 
 classdef PassiveLoad < SimplusGT.Class.ModelAdvance

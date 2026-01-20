@@ -4,7 +4,7 @@
   "Basic": 
 {
 
-    "Fs": 50000,
+    "Fs": 150000,
     "Fbase": 50,
     "Sbase": 1,
     "Vbase": 1
@@ -19,7 +19,7 @@
     "DiscretizationDampingFlag": 1,
     "DirectFeedthrough": 0,
     "PowerFlowAlgorithm": 1,
-    "EnableCreateSimulinkModel": 1,
+    "EnableCreateSimulinkModel": 0,
     "EnablePlotPole": 1,
     "EnablePlotAdmittance": 1,
     "EnablePrintOutput": 1
@@ -125,7 +125,7 @@
 {
 
       "BusNo": 2,
-      "Type": 10,
+      "Type": 11,
       "Para": 
 {
 

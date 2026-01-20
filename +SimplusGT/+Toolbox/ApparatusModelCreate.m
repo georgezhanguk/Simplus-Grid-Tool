@@ -24,7 +24,7 @@
 % function." IEEE Transctions on Circuit and Systems, 2020.
 
 %% function
-function [GmObj,GmDSS,ApparatusPara,ApparatusEqui,DiscreDampingResistor,OtherInputs,StateStr,InputStr,OutputStr, Gm2, Gm3] ...
+function [GmObj,GmDSS,ApparatusPara,ApparatusEqui,DiscreDampingResistor,OtherInputs,StateStr,InputStr,OutputStr, Gm, Gm2, Gm3] ...
         = ApparatusModelCreate(ApparatusBus,Type,PowerFlow,Para,Ts,ListBus) 
 
 %% Create an object
@@ -121,6 +121,10 @@ switch floor(Type/10)
                         Para.v_dc_ref
                         Para.fvdc;
                         Para.fidc];
+    case 8 % Type 80-89
+    Apparatus = SimplusGT.Class.PassiveLoadAC('ApparatusType',Type);
+    Apparatus.Para = [Para.R;
+                      Para.L];
     % ### Ac infinite bus
     case 9
         Apparatus = SimplusGT.Class.InfiniteBusAc;
@@ -245,7 +249,7 @@ ApparatusPara = Apparatus.Para;
 ApparatusEqui = {x_e,u_e,y_e,xi};
 
 % Output the discretization damping resistance for simulation use
-if Type<90 || (1000<=Type && Type<1090) || (2000<=Type && Type<2090)
+if Type<80 || (1000<=Type && Type<1090) || (2000<=Type && Type<2090)
     % CalcRv_old();
     
     Apparatus.SetDynamicSS(Apparatus,x_e,u_e);
@@ -255,7 +259,7 @@ else
 end
 Gm3=0;
 %% Check if the apparatus needs to adjust its frame
-if (Type>=90 && Type<1000)
+if (Type>=80 && Type<1000)
     % No need for frame dynamics embedding
 elseif (Type>=1000 && Type<2000)
     % No need for frame dynamics embedding
