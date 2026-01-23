@@ -213,6 +213,11 @@ Para0090 = [];
 % ======================================
 Para0100 = [];
 
+% ======================================
+% AC RL Passive Load (TEST)
+% ======================================
+Para0110 = [];
+
 %% Default DC apparatus data
 % ======================================
 % Grid-feeding buck
@@ -281,6 +286,8 @@ for i = 1:N_App
             ParaCell{i} = Para0090;     % Ac inifnite bus
         case 10
             ParaCell{i} = Para0100;     % Ac floating bus, i.e., no apparatus
+        case 11
+            ParaCell{i} = Para0110;     % Ac Passive RL Load (TEST)
         
         % ### DC apparatuses
         case 101
@@ -390,6 +397,13 @@ for i = 1:length(row)
             case 15; ParaCell{row(i)}.v_dc_ref = UserValue;    
             case 16; ParaCell{row(i)}.fvdc     = UserValue; 
             case 17; ParaCell{row(i)}.fidc     = UserValue;  
+            otherwise
+                error(['Error: parameter overflow, bus ' num2str(AppBus) 'type ' num2str(AppType) '.']);
+        end
+    elseif floor(AppType/10) == 11                % AC Passive Load (TEST)
+        switch SwitchFlag
+            case 1;  ParaCell{row(i)}.R       = UserValue;
+            case 2;  ParaCell{row(i)}.L       = UserValue;
             otherwise
                 error(['Error: parameter overflow, bus ' num2str(AppBus) 'type ' num2str(AppType) '.']);
         end

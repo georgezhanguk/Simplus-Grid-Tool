@@ -134,6 +134,11 @@ switch floor(Type/10)
     case 10
         Apparatus = SimplusGT.Class.FloatingBusAc;
         Apparatus.Para = [];
+
+    case 11 % Ac Passive RL Load (TEST)
+    Apparatus = SimplusGT.Class.PassiveLoadAC('ApparatusType',Type);
+    Apparatus.Para = [Para.R;
+                      Para.L];
         
 	% =======================================
     % Dc apparatuses
