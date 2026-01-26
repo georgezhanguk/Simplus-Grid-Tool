@@ -25,7 +25,7 @@ for i = 1:length(ApparatusType)
     elseif ((ApparatusType{i} >= 10) && (ApparatusType{i} <= 19)) 
         ibus(m) = i;   
         m = m+1;
-    elseif (ApparatusType{i} == 100)
+    elseif ((ApparatusType{i} == 100) || (ApparatusType{i} == 110))
         fbus(n) = i;
         n = n+1;
     else

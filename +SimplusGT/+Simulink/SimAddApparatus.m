@@ -49,6 +49,10 @@ for i = 1:N_Apparatus
             	Name_Apparatus{i} = ['Inf-Bus' num2str(Bus)];
                 FullName_Apparatus{i} = [Name_Model '/' Name_Apparatus{i}];
                 add_block([Name_LibFile '/AC Infinite Bus (Voltage Type)'],FullName_Apparatus{i});
+            case 011 
+            	Name_Apparatus{i} = ['Passive-AC-Load' num2str(Bus)];
+                FullName_Apparatus{i} = [Name_Model '/' Name_Apparatus{i}];
+                add_block([Name_LibFile '/Passive-AC-Load (dq-Frame System Object)'],FullName_Apparatus{i});
                 
             % ### Dc apparatus
             case 101

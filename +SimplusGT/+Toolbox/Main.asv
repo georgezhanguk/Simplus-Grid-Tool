@@ -405,6 +405,8 @@ function PlotAdmittanceSpectrum(NumBus,ApparatusBus,ApparatusType,GsysSs,PortBus
     OmegaPN = [-flip(OmegaP),OmegaP];
     CountLegend = 0;
     VecLegend = {};
+    freqresp((1:2,1:2), w_r);
+    freqresp_bode(h1, h2, w_r, fig_k, varargin)
     % Transform matrix from transfer function to complex vector
     T = [1,1i;
          1,-1i];
@@ -423,7 +425,7 @@ function PlotAdmittanceSpectrum(NumBus,ApparatusBus,ApparatusType,GsysSs,PortBus
             YcellSymCplx{k} = SimplusGT.ss2sym(YcellSsCplx{k});
             
             figure(FigN);
-            SimplusGT.bode_c(YcellSym{k}(1:2,1:2),1j*OmegaP,'PhaseOn',1); 
+            SimplusGT.bode_c(YcellSym{k}(1,1),1j*OmegaP,'PhaseOn',1); 
             figure(FigN+1);
             SimplusGT.bode_c(YcellSymCplx{k}(1,1),1j*OmegaPN,'PhaseOn',1); 
             
@@ -472,32 +474,32 @@ function PlotGridStrength(ApparatusType,ListLine,FigN)
 end
 
 %%
-% % Plot grid strength
-% %
-% % Author(s): George Zhang
-% 
-% function PlotAdmittanceSpectrumFull(NumBus,ApparatusBus,ApparatusType,GsysSs,PortBusI,PortBusV,FigN)
-% 
-%     figure(FigN);
-% 
-%     [Ydiag,Ybus] = SimplusGT.Toolbox.BusStrength(ApparatusType,ListLine);
-%     [~,~,GraphFigure] = SimplusGT.Toolbox.PlotLayoutGraph(Ybus);
-%     [vbus,ibus,fbus] = SimplusGT.Toolbox.BusTypeVIF(ApparatusType);
-% 
-%     highlight(GraphFigure,vbus,'NodeColor','green');
-%     highlight(GraphFigure,ibus,'NodeColor','red'); 
-%     highlight(GraphFigure,fbus,'NodeColor',[0.7,0.7,0.7]);   	% gray
-% 
-%     x = GraphFigure.XData';
-%     y = GraphFigure.YData';
-%     z = log10(abs(Ydiag))';
-% 
-%     SimplusGT.Toolbox.PlotHeatMap(x,y,z);
-%     uistack(GraphFigure,'top');
-% 
-%     h = colorbar;
-%     h.Label.String = "log_{10}(Bus Admittance)";
-% 
-%     title('Grid Strength')
-% 
-% end
+% Plot grid strength
+%
+% Author(s): George Zhang
+
+function PlotAdmittanceSpectrumFull(NumBus,ApparatusBus,ApparatusType,GsysSs,PortBusI,PortBusV,FigN)
+
+    figure(FigN);
+
+    [Ydiag,Ybus] = SimplusGT.Toolbox.BusStrength(ApparatusType,ListLine);
+    [~,~,GraphFigure] = SimplusGT.Toolbox.PlotLayoutGraph(Ybus);
+    [vbus,ibus,fbus] = SimplusGT.Toolbox.BusTypeVIF(ApparatusType);
+
+    highlight(GraphFigure,vbus,'NodeColor','green');
+    highlight(GraphFigure,ibus,'NodeColor','red'); 
+    highlight(GraphFigure,fbus,'NodeColor',[0.7,0.7,0.7]);   	% gray
+
+    x = GraphFigure.XData';
+    y = GraphFigure.YData';
+    z = log10(abs(Ydiag))';
+
+    SimplusGT.Toolbox.PlotHeatMap(x,y,z);
+    uistack(GraphFigure,'top');
+
+    h = colorbar;
+    h.Label.String = "log_{10}(Bus Admittance)";
+
+    title('Grid Strength')
+
+end
