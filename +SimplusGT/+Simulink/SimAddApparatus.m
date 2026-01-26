@@ -77,7 +77,7 @@ for i = 1:N_Apparatus
         
         % Set position
        	% The position of apparatus is set by referring to the position of correpsonding bus
-        if 0<=ApparatusType{i} && ApparatusType{i}<=90    
+        if 0<=ApparatusType{i} && ApparatusType{i}<=90  || ApparatusType{i} == 110  
             % For ac apparatuses
             Pos_Apparatus{i} = Pos_Bus{Bus} + Shift_Apparatus;
             set_param(FullName_Apparatus{i},'position',[Pos_Apparatus{i},Pos_Apparatus{i}+Size_Apparatus]);
@@ -148,6 +148,8 @@ for i = 1:N_Apparatus
             set_param(gcb,'vd',['PowerFlow{' num2str(i) '}(3)']);
             set_param(gcb,'theta0',['PowerFlow{' num2str(i) '}(4)']);
             set_param(gcb,'w','Wbase');
+        elseif ApparatusType{i} == 110 % RL Load
+            set_param(gcb,'ApparatusPara',['ApparatusPara{' num2str(i) '}']);
         elseif ApparatusType{i} == 1090    % Dc infinite bus
             set_param(gcb,'v',['PowerFlow{' num2str(i) '}(3)']);
         end

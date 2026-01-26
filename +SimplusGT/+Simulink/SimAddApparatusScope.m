@@ -23,6 +23,9 @@ for i = 1:N_Apparatus
         if ApparatusType{i}<=90
             Output_DS_Bus = ['v_dq,i_dq,v_abc,i_abc,w,theta,pq'];
             Length_D_Measurement = 7;
+        elseif ApparatusType{i}==110
+            Output_DS_Bus = ['v_abc,i_abc'];
+            Length_D_Measurement = 2;
         elseif 1000<=ApparatusType{i} && ApparatusType{i}<=1090
             Output_DS_Bus = ['v,i,p'];
             Length_D_Measurement = 3;

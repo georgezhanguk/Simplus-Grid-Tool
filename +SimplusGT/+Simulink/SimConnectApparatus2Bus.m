@@ -14,7 +14,7 @@ for i = 1:N_Apparatus
     Bus = ApparatusBus{i};
     
     % If the apparatus is NOT a "floating bus"
-    if ApparatusType{i}<=90
+    if ApparatusType{i}<=90 || ApparatusType{i} == 110
         % For ac apparatuses
         add_line(Name_Model,...
             {[Name_Apparatus{i} '/Lconn1'],[Name_Apparatus{i} '/Lconn2'],[Name_Apparatus{i} '/Lconn3']},...
