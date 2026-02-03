@@ -14,6 +14,35 @@
 % For the buck dc-dc converter, the dc generation/load side suffers
 % discontinous current, and the dc grid side is in continous current
 % because of the output inductor.
+%
+%
+%
+% Diagram
+% Type 1010
+%                LOAD/SOURCE SIDE              GRID SIDE
+%
+%                             ______     L      R    [i]    
+%                            |      |--nnnnn--MWMWM---<--o ^
+%                            | BUCK |                      | [v]
+%                            |______|--------------------o |
+
+% Type 1011
+%                LOAD/SOURCE SIDE              GRID SIDE
+%
+%                [P_dc]       ______     L      R    [i]    
+%          ^  -----<---|-----|      |--nnnnn--MWMWM---<--o ^
+%   [vdc]  |      C_dc =     | BUCK |                      | [v]
+%          |  ---------|-----|______|--------------------o |
+
+ 
+%                LOAD/SOURCE SIDE              GRID SIDE
+%
+%                   L    [i_dc]       ______     L      R    [i]    
+%        ^  o-----nnnnn---->---|-----|      |--nnnnn--MWMWM---<--o ^
+% [vdc]  |                C_dc =  vc | BUCK |                      | [v]
+%        |  o------------------|-----|______|--------------------o |
+
+
 
 %% Class
 
@@ -34,11 +63,19 @@ classdef GridFeedingBuck < SimplusGT.Class.ModelAdvance
                 State = {'i','i_i'};
             elseif obj.ApparatusType == 1011
                 State = {'i','i_i','v_dc','v_dc_i'};
+            elseif obj.ApparatusType == 1012
+                State = {'i','i_i','i_dc','v_c','v_c_i'};
             else
                 error('Error: Invalid ApparatusType.');
             end
-        	Input = {'v','P_dc'};
-            Output = {'i','v_dc'};
+
+            if obj.ApparatusType == 1010 || obj.ApparatusType == 1011
+        	    Input = {'v','P_dc'};
+                Output = {'i','v_dc'};
+            elseif obj.ApparatusType == 1012
+                Input = {'v','v_dc'};
+                Output = {'i','i_dc'};
+            end
         end
         
         function [x_e,u_e,xi] = Equilibrium(obj)
@@ -119,7 +156,7 @@ classdef GridFeedingBuck < SimplusGT.Class.ModelAdvance
             % ### Call state equation: dx/dt = f(x,u)
                 
                 % Get current reference
-               	if obj.ApparatusType == 1011
+               	if obj.ApparatusType == 1011 || obj.ApparatusType == 1012
                     % DC-link control
                     i_r = (v_dc_r - v_dc)*kp_v_dc + v_dc_i;
                 elseif obj.ApparatusType == 1010
