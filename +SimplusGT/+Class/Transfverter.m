@@ -10,14 +10,10 @@
 % dc-side: load convention, admittance form.
 
 %% Class
-
-% Please change "ModelTemplate" here to your customized name and save this
-% file as your customized name as well.
 classdef Transfverter < SimplusGT.Class.ModelAdvance
     
   	methods
         % Constructor
-        % Please change "ModelTemplate" to your customized name.
         function obj = Transfverter(varargin)
             setProperties(obj,nargin,varargin{:});
         end
@@ -25,22 +21,13 @@ classdef Transfverter < SimplusGT.Class.ModelAdvance
     
     methods(Static)
         
-        % Set the strings of state, input, output
-        %
-        % These strings are mainly for printing output and searching the
-        % corresponding ports.
-        %
-        % For ac apparatuses, the first two inputs and outputs should be
-        % {'v_d','v_q'} and {'i_d','i_q'}, and {'w'} should be output. For
-        % dc apparatuses, the first input and output should be {'v'} and {'i'}.
-        % No specific requirementFor other inputs, outputs, and states.
-        %
-        % The dimensions of x, u, y must be coinsistent in following three
+        % The dimensions of x, u, y must be consistent in following three
         % functions: SignalList, Equilibrium, and StateSpaceEqu.
         function [State,Input,Output] = SignalList(obj)
-        	State  = {'x1','x2'}; 	% x, state
-            Input  = {'v'};        	% u, input
-            Output = {'i'};        	% y, output
+        	State  = {'i_d','i_q','i','p_sum_i', ...        % x, states
+                      'p_delta_i','v_lk','v_ref','w_ref','w','theta'}; 	        
+            Input  = {'v_d','v_q','v'};        	            % u, inputs
+            Output = {'i_d','i_q','i','w','theta'};         % y, outputs
         end
         
         % Calculate the equilibrium
@@ -72,40 +59,107 @@ classdef Transfverter < SimplusGT.Class.ModelAdvance
         end
         
     	% State space model
-        % This function defines the state space model of this apparatus,
-        % and is the core part for capturing the dynamics of this apparatus.
         %
         % This function will be called at each step, i.e., Ts, during the
         % whole precedure of the discrete simulation.
         %
-        % The state space model should be a large-signal model rather than
+        % The state space model is a large-signal model rather than
         % a small-signal model. The linearized model will be calculated by
         % functions in the parent class and the linearization point (i.e.
         % equilibrium) is calculated above.
         function [Output] = StateSpaceEqu(obj,x,u,CallFlag)
+            % P_ac    = obj.PowerFlow(1);
+            % Vg_ac   = obj.PowerFlow(3);
+            % Vg_dc   = obj.PowerFlow(8);
+            VAC0   = obj.PowerFlow(3);
+            V0     = obj.PowerFlow(8);
+
           	% Get parameter
-            obj.Para(1);
+
+            Rac = obj.Para(1);
+            Lac = obj.Para(2);
+            Rdc = obj.Para(3);
+            Ldc = obj.Para(4);
+            kp_sum = obj.Para(5);
+            ki_sum = obj.Para(6);
+            kp_lk = obj.Para(7);
+            ki_lk = obj.Para(8);
+            D_dc = obj.Para(9);
+            D_ac = obj.Para(10);
+            VLK0 = obj.Para(11);
+            W0 = obj.Para(12);
+            %V0 = obj.Para(12);
+            %VAC0 = obj.Para(13);
             
-        	% Get state
-            x(1);
-            
-            % Get input
-            u(1);
+            beta = D_dc/D_ac;
+
+        	% Get states
+            i_d   	    = x(1);
+            i_q   	    = x(2);
+            i  	        = x(3);
+            p_sum_i     = x(4);
+            p_delta_i   = x(5);
+            v_lk        = x(6);
+            v_ref       = x(7);
+            w_ref  	    = x(8);
+            w           = x(9);
+            theta       = x(10);
+
+            % Get inputs
+            v_d    = u(1);
+            v_q    = u(2);
+            v      = u(3);
             
             % State space equations
           	% dx/dt = f(x,u)
             % y     = g(x,u)
+
+            % Power Measurement
+            p_dc =  (v*i)*(-1);
+            p_ac =  (v_d*i_d + v_q*i_q)*(-1);
+
+            % Interlink Control
+            p_bal = (v - VDC0) - beta * (w - W0)/(2*pi);
+            p_sum_ref = p_bal * kp_sum + p_sum_i;
+            dp_sum_i = p_bal * ki_sum;
+            p_delta_ref = (v_lk - VLK0) * kp_lk + p_delta_i;
+            dp_delta_i = (v_lk - VLK0) * ki_lk;
+            p_dc_ref = p_delta_ref - p_sum_ref;
+            p_ac_ref = p_delta_ref + p_sum_ref;
+
+            % AC Droop Control
+            dw_ref = (D_ac * (p_ac_ref - p_ac) + W0 - w_ref)*wa;
+
+            % DC Droop Control
+            dv_ref = (D_dc * (p_dc_ref - p_dc) + V0 - v_ref)*wa;
+
+            % Link Dynamics
+            i_lk_dc = p_dc/v_lk;
+            i_lk_ac = p_ac/v_lk;
+            i_lk = - i_lk_dc - i_lk_ac;
+            dv_lk = i_lk/C_lk;
+            
+            % DC-AC Sources
+            e_d = VAC0;
+            e_q = 0;
+            w = w_ac_ref;
+            dtheta = w;
+            e_dc = v_dc_ref;
+
+            % AC filter inductor
+          	di_d = (v_d - Rac*i_d + w*Lac*i_q - e_d)/Lac;
+            di_q = (v_q - Rac*i_q - w*Lac*i_d - e_q)/Lac;
+
+            % DC filter inductor
+          	di = (v - Rdc*i - e_dc)/Ldc;
+
             if CallFlag == 1
                 % ### Call state equation: dx/dt = f(x,u)
-                
-                f_xu = [];
+                f_xu = [di_d; di_q; di; dp_sum_i; dp_delta_i; dv_lk; dv_ref; dw_ref; dw; dtheta];
                 Output = f_xu;
             elseif CallFlag == 2
                 % ### Call output equation: y = g(x,u)
-                % Just be careful that the input and output must coincide
-                % with the signal sequence as well as the ports in simulink model.
-
-                g_xu = [];
+                g_xu = [i_d; i_q; i; w; theta];
                 Output = g_xu;
             end
         end

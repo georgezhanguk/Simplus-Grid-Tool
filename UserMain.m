@@ -34,6 +34,7 @@ UserDataName = 'UserData';      % Default 4-bus system
 %
 % Hybrid ac-dc power system examples:
 % UserDataName = 'Hybrid_4Bus';             % A 4-bus hybrid ac-dc system
+% UserDataName = 'Transfverter_4Bus';             % A 4-bus hybrid ac-dc system
 % UserDataName = 'Hybrid_28Bus';
 % UserDataName = 'HVDC_Infbus_4Bus';        % HVDC system connected to inf buses
 % UserDataName = 'HVDC_SG_4Bus';            % HVDC system connected to equivalent SG buses

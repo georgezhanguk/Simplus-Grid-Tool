@@ -178,6 +178,21 @@ switch floor(Type/10)
                         Para.N;
                         Para.v_dc_ref;
                         Para.w0];
+
+        case 201
+        Apparatus = SimplusGT.Class.Transfverter('ApparatusType',Type);
+        Apparatus.Para = [ Para.Rac;
+                        Para.Lac;
+                        Para.Rdc;
+                        Para.Ldc;
+                        Para.kp_sum;
+                        Para.ki_sum;
+                        Para.kp_lk;
+                        Para.ki_lk;
+                        Para.D_dc;
+                        Para.D_ac;
+                        Para.VLK0;
+                        Para.W0];    
     
     % ### Otherwise
     otherwise

@@ -253,6 +253,22 @@ Para2000.K         = 1;
 Para2000.N         = 1;
 Para2000.v_dc_ref  = 1;
 
+% ======================================
+% Transfverter
+% ======================================
+Para2010.Rac    =   2e-5;
+Para2010.Lac    =   0.01;
+Para2010.Rdc    =   2e-5;
+Para2010.Ldc    =   0.005;
+Para2010.kp_sum =   0.06;
+Para2010.ki_sum =   21;
+Para2010.kp_lk  =   6;
+Para2010.ki_lk  =   3;
+Para2010.D_dc   =   0.01;
+Para2010.D_ac   =   0.003;
+Para2010.VLK0   =   1;
+Para2010.W0     =   W0;
+    
 %% Re-arrange apparatus data
 
 % Find the index of user-defined data
@@ -293,6 +309,8 @@ for i = 1:N_App
         % ### Hybrid ac-dc apparatuses
         case 200
             ParaCell{i} = Para2000;     % Interlinking ac-dc converter
+        case 201
+            ParaCell{i} = Para2010;     % Transfverter
             
         % ### Error check
         otherwise
