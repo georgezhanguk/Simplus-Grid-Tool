@@ -85,28 +85,42 @@ classdef GridFormingVSI < SimplusGT.Class.ModelAdvance
             i_ldq = i_odq - i_cdq;
             e_dq  = v_odq - i_ldq*(Rf + 1i*w*Lf);
             
-            i_ld = real(i_ldq);
-            i_lq = imag(i_ldq);
-            i_ld_i = real(e_dq);
-            i_lq_i = imag(e_dq);
-            v_od = real(v_odq);
-            v_oq = imag(v_odq);
-            v_od_i = -i_ld;
-            v_oq_i = -i_lq;
-            i_od = real(i_odq);
-            i_oq = imag(i_odq);
+            v_odq_r = v_odq + (Rov + 1i*Xov)*i_odq*(-1);
+
+            % Transform
+            arg_vo = angle(v_odq_r);
+            xi = xi + arg_vo;
+            v_odq_r = v_odq_r * exp(-1j*arg_e);
+            v_odq = v_odq * exp(-1j*arg_e);
+            v_gdq = v_gdq * exp(-1j*arg_e);
+            e_dq = e_dq * exp(-1j*arg_e);
+            i_cdq = i_cdq * exp(-1j*arg_e);
+            i_ldq = i_ldq * exp(-1j*arg_e);
+            i_odq = i_odq * exp(-1j*arg_e);
+
+            % D and Q
+            v_od_r      = real(v_odq_r);
+            v_oq_r      = imag(v_odq_r);
+            obj.v_od_r  = v_od_r;
+            obj.v_oq_r  = v_oq_r;
+            i_ld        = real(i_ldq);
+            i_lq        = imag(i_ldq);
+            i_ld_i      = real(e_dq);
+            i_lq_i      = imag(e_dq);
+            v_od        = real(v_odq);
+            v_oq        = imag(v_odq);
+            v_gd        = real(v_gdq);
+            v_gq        = imag(v_gdq);
+            v_od_i      = -i_ld;
+            v_oq_i      = -i_lq;
+            i_od        = real(i_odq);
+            i_oq        = imag(i_odq);
+
             theta = xi;
             
-            obj.P0 = P*(-1);
-            obj.Q0 = Q*(-1);
-            
-            % ??? Temp
-            v_odq_r = v_odq + (Rov + 1i*Xov)*i_odq*(-1);
-            v_od_r = real(v_odq_r);
-            v_oq_r = imag(v_odq_r);
-            obj.v_od_r = v_od_r;
-            obj.v_oq_r = v_oq_r;
-            
+            obj.P0 = (v_od*i_od + v_oq*i_oq)*(-1);
+            obj.Q0 = (-v_od*i_oq + v_oq*i_od)*(-1);
+           
             % Notes:
             % Ideally, v_oq_r = 0 should be valid. So, this equilibrium
             % calculation has to be corrected.
