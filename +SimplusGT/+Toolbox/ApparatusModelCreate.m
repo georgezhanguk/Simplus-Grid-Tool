@@ -192,7 +192,9 @@ switch floor(Type/10)
                         Para.D_dc;
                         Para.D_ac;
                         Para.VLK0;
-                        Para.W0];    
+                        Para.W0;
+                        Para.wa
+                        Para.C_lk];    
     
     % ### Otherwise
     otherwise

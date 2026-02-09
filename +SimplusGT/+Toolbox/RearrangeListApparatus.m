@@ -268,6 +268,8 @@ Para2010.D_dc   =   0.01;
 Para2010.D_ac   =   0.003;
 Para2010.VLK0   =   1;
 Para2010.W0     =   W0;
+Para2010.wa     =   10;
+Para2010.C_lk   =   1;
     
 %% Re-arrange apparatus data
 

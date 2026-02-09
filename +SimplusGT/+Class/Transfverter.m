@@ -35,26 +35,75 @@ classdef Transfverter < SimplusGT.Class.ModelAdvance
         % own paramters.This function will be called once, at the
         % beginning of simulation.
         function [x_e,u_e,xi] = Equilibrium(obj)
-         	% Get the power PowerFlow values
-            P 	= obj.PowerFlow(1);
-            Q	= obj.PowerFlow(2);
-            V	= obj.PowerFlow(3);
-            xi	= obj.PowerFlow(4);
-            w   = obj.PowerFlow(5);
+            % Get the power PowerFlow values
+            % The transfverter has two sets of power flow results
+            % because it is connected to two buses: the first one is ac,
+            % and the second one is dc.
+            P_ac    = obj.PowerFlow(1);
+            Q_ac    = obj.PowerFlow(2);
+            Vg_ac   = obj.PowerFlow(3);
+            xi      = obj.PowerFlow(4);
+            w       = obj.PowerFlow(5);
             
-            % Get parameters
-            obj.Para(1);
-            % if you would like to change the parameters at 2.0s. Taking xi as an example 
-            if obj.Timer>2
-                xi =6;
-            end
+            P_dc    = obj.PowerFlow(6);
+            Vg_dc   = obj.PowerFlow(8);
+
             
+            
+          	% Get parameters
+
+            Rac = obj.Para(1);
+            Lac = obj.Para(2);
+            Rdc = obj.Para(3);
+            Ldc = obj.Para(4);
+            kp_sum = obj.Para(5);
+            ki_sum = obj.Para(6);
+            kp_lk = obj.Para(7);
+            ki_lk = obj.Para(8);
+            D_dc = obj.Para(9);
+            D_ac = obj.Para(10);
+            VLK0 = obj.Para(11);
+            W0 = obj.Para(12);
+            V0 = obj.Para(12);
+            wa = obj.Para(13);
+            C_lk = obj.Para(14);
+            %VAC0 = obj.Para(13);
+            
+            beta = D_dc/D_ac;           
             
             % Calculate equilibrium
+            v = Vg_dc;
+            i = P_dc/v;
+            e = v - i*Rdc;
             
+            w = (v - V0)*2*pi/beta + W0;
+
+            v_d = Vg_ac;
+            v_q = 0;
+            i_d = P_ac/v_d;
+            i_q = -Q_ac/v_d;
+            v_dq = v_d + 1i*v_q;
+            i_dq = i_d + 1i*v_q;
+            e_dq = v_dq - i_dq*(Rac + 1i*w*Lac);
+
+            v_ref = e;
+            p_dc_ref = (v_ref-V0)/D_dc + P_dc;
+            p_ac_ref = P_ac + (w - W0)/D_ac;
+
+            w_ref = w;    
+            p_sum_ref = (p_ac_ref - p_dc_ref)/2;
+            p_delta_ref = (p_ac_ref + p_dc_ref)/2;
+            
+            p_sum_i = p_sum_ref;
+            p_delta_i = p_delta_ref;
+            
+            v_lk = VLK0;
+            
+            theta = xi;
+
             % Set equilibrium
-            x_e = [];
-            u_e = [];
+            x_e = [i_d; i_q; i; p_sum_i; p_delta_i; v_lk; v_ref; w_ref; w; theta];
+            u_e = [v_d; v_q; v];
             xi  = xi;
         end
         
@@ -88,6 +137,8 @@ classdef Transfverter < SimplusGT.Class.ModelAdvance
             D_ac = obj.Para(10);
             VLK0 = obj.Para(11);
             W0 = obj.Para(12);
+            wa = obj.Para(13);
+            C_lk = obj.Para(14);
             %V0 = obj.Para(12);
             %VAC0 = obj.Para(13);
             
@@ -119,19 +170,19 @@ classdef Transfverter < SimplusGT.Class.ModelAdvance
             p_ac =  (v_d*i_d + v_q*i_q)*(-1);
 
             % Interlink Control
-            p_bal = (v - VDC0) - beta * (w - W0)/(2*pi);
-            p_sum_ref = p_bal * kp_sum + p_sum_i;
-            dp_sum_i = p_bal * ki_sum;
-            p_delta_ref = (v_lk - VLK0) * kp_lk + p_delta_i;
-            dp_delta_i = (v_lk - VLK0) * ki_lk;
-            p_dc_ref = p_delta_ref - p_sum_ref;
-            p_ac_ref = p_delta_ref + p_sum_ref;
+            p_bal           = (v - V0) - beta * (w - W0)/(2*pi);
+            p_sum_ref       = p_bal * kp_sum + p_sum_i;
+            dp_sum_i        = p_bal * ki_sum;
+            p_delta_ref     = (v_lk - VLK0) * kp_lk + p_delta_i;
+            dp_delta_i      = (v_lk - VLK0) * ki_lk;
+            p_dc_ref        = p_delta_ref - p_sum_ref;
+            p_ac_ref        = p_delta_ref + p_sum_ref;
 
             % AC Droop Control
-            dw_ref = (D_ac * (p_ac_ref - p_ac) + W0 - w_ref)*wa;
-
+            dw_ref          = (D_ac * (p_ac_ref - p_ac) + W0 - w_ref)*wa;
+            dw              = dw_ref;
             % DC Droop Control
-            dv_ref = (D_dc * (p_dc_ref - p_dc) + V0 - v_ref)*wa;
+            dv_ref          = (D_dc * (p_dc_ref - p_dc) + V0 - v_ref)*wa;
 
             % Link Dynamics
             i_lk_dc = p_dc/v_lk;
@@ -142,9 +193,9 @@ classdef Transfverter < SimplusGT.Class.ModelAdvance
             % DC-AC Sources
             e_d = VAC0;
             e_q = 0;
-            w = w_ac_ref;
+            w = w_ref;
             dtheta = w;
-            e_dc = v_dc_ref;
+            e_dc = v_ref;
 
             % AC filter inductor
           	di_d = (v_d - Rac*i_d + w*Lac*i_q - e_d)/Lac;
