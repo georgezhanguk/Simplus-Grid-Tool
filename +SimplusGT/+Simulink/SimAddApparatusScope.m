@@ -26,9 +26,12 @@ for i = 1:N_Apparatus
         elseif 1000<=ApparatusType{i} && ApparatusType{i}<=1090
             Output_DS_Bus = ['v,i,p'];
             Length_D_Measurement = 3;
-        elseif 2000<=ApparatusType{i} && ApparatusType{i}<=2090
+        elseif 2000<=ApparatusType{i} && ApparatusType{i}<=2090 && ApparatusType{i}~=2010
             Output_DS_Bus = ['v_dq,i_dq,v_abc,i_abc,w,theta,pq_ac,v,i,p_dc'];
             Length_D_Measurement = 10;
+        elseif ApparatusType{i}==2010
+            Output_DS_Bus = ['v_dq,i_dq,v_abc,i_abc,w,theta,pq_ac,v,i,p_dc,v_lk,i_lk,p_dc_r,p_ac_r,dacpe,dacpe2'];
+            Length_D_Measurement = 16;
         end
         
         set_param(gcb,'OutputSignals',Output_DS_Bus);

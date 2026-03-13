@@ -224,6 +224,7 @@ Para1010.R    = 0.05/5;
 Para1010.fi   = 600;
 Para1010.fvdc = 5;
 Para1010.w0   = W0;
+Para1010.fv   = 60;
 
 % ======================================
 % Dc infinite bus (short-circuit in small-signal)
@@ -256,20 +257,31 @@ Para2000.v_dc_ref  = 1;
 % ======================================
 % Transfverter
 % ======================================
-Para2010.Rac    =   2e-5;
-Para2010.Lac    =   0.01;
-Para2010.Rdc    =   2e-5;
-Para2010.Ldc    =   0.005;
-Para2010.kp_sum =   0.06;
-Para2010.ki_sum =   21;
-Para2010.kp_lk  =   6;
-Para2010.ki_lk  =   3;
-Para2010.D_dc   =   0.01;
-Para2010.D_ac   =   0.003;
-Para2010.VLK0   =   1;
-Para2010.W0     =   W0;
-Para2010.wa     =   10;
-Para2010.C_lk   =   1;
+Para2010.Rac       =   0.02;
+Para2010.Lac       =   0.1;
+Para2010.Rdc       =   0.01;
+Para2010.Ldc       =   0.02;
+Para2010.kp_sum    =   0.06;
+Para2010.ki_sum    =   21;
+Para2010.kp_lk     =   15;
+Para2010.ki_lk     =   .2;
+Para2010.D_dc      =   0.01;
+Para2010.D_ac      =   0.01;
+Para2010.VLK0      =   1;
+Para2010.W0        =   W0;
+Para2010.V0        =   1;
+Para2010.wa        =   2*pi*5;
+Para2010.C_lk      =   20;
+Para2010.kp_v_dq   =   1;
+Para2010.ki_v_dq   =   0.1;
+Para2010.kp_i_dq   =   0.5;
+Para2010.ki_i_dq   =   63;
+Para2010.kp_v      =   3.2;
+Para2010.ki_v      =   3200;
+Para2010.kp_i      =   0.5;
+Para2010.ki_i      =   40;
+Para2010.Rov       =   0.0;
+Para2010.Xov       =   0.0;
     
 %% Re-arrange apparatus data
 
@@ -421,6 +433,7 @@ for i = 1:length(row)
            	case 4;  ParaCell{row(i)}.R  	= UserValue;
          	case 5;  ParaCell{row(i)}.fi  	= UserValue;
            	case 6;  ParaCell{row(i)}.fvdc 	= UserValue;
+            case 7;  ParaCell{row(i)}.fv 	= UserValue;
             otherwise
                 error(['Error: parameter overflow, bus ' num2str(AppBus) 'type ' num2str(AppType) '.']);
         end
@@ -438,6 +451,36 @@ for i = 1:length(row)
             case 10; ParaCell{row(i)}.K        = UserValue;
             case 11; ParaCell{row(i)}.N        = UserValue;
             case 12; ParaCell{row(i)}.v_dc_ref = UserValue;
+            otherwise
+                error(['Error: parameter overflow, bus ' num2str(AppBus) 'type ' num2str(AppType) '.']);
+        end
+    elseif floor(AppType/10) == 201 % Transfverter
+        switch SwitchFlag
+            case 1;  ParaCell{row(i)}.Rac       = UserValue;
+            case 2;  ParaCell{row(i)}.Lac       = UserValue;
+            case 3;  ParaCell{row(i)}.Rdc       = UserValue;
+            case 4;  ParaCell{row(i)}.Ldc       = UserValue;
+            case 5;  ParaCell{row(i)}.kp_sum    = UserValue;
+            case 6;  ParaCell{row(i)}.ki_sum    = UserValue;
+            case 7;  ParaCell{row(i)}.kp_lk     = UserValue;
+            case 8;  ParaCell{row(i)}.ki_lk     = UserValue;
+            case 9;  ParaCell{row(i)}.D_dc      = UserValue; 
+            case 10; ParaCell{row(i)}.D_ac      = UserValue;
+            case 11; ParaCell{row(i)}.VLK0      = UserValue;
+            case 12; ParaCell{row(i)}.W0        = UserValue;
+            case 13; ParaCell{row(i)}.V0        = UserValue;
+            case 14; ParaCell{row(i)}.wa        = UserValue;
+            case 15; ParaCell{row(i)}.C_lk      = UserValue;
+            case 16; ParaCell{row(i)}.kp_v_dq   = UserValue;
+            case 17; ParaCell{row(i)}.ki_v_dq   = UserValue;
+            case 18; ParaCell{row(i)}.kp_i_dq   = UserValue;
+            case 19; ParaCell{row(i)}.ki_i_dq   = UserValue;
+            case 20; ParaCell{row(i)}.kp_v      = UserValue;
+            case 21; ParaCell{row(i)}.ki_v      = UserValue;
+            case 22; ParaCell{row(i)}.kp_i      = UserValue;
+            case 23; ParaCell{row(i)}.ki_i      = UserValue;
+            case 24; ParaCell{row(i)}.Rov       = UserValue;
+            case 25; ParaCell{row(i)}.Xov       = UserValue;
             otherwise
                 error(['Error: parameter overflow, bus ' num2str(AppBus) 'type ' num2str(AppType) '.']);
         end

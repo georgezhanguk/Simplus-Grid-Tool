@@ -65,6 +65,10 @@ for i = 1:N_Apparatus
               	Name_Apparatus{i} = ['Interlink' num2str(Bus(1)) '-' num2str(Bus(2))];
                 FullName_Apparatus{i} = [Name_Model '/' Name_Apparatus{i}];
                 add_block([Name_LibFile '/Interlink AC-DC (System Object)'],FullName_Apparatus{i});
+            case 201
+              	Name_Apparatus{i} = ['Transfverter' num2str(Bus(1)) '-' num2str(Bus(2))];
+                FullName_Apparatus{i} = [Name_Model '/' Name_Apparatus{i}];
+                add_block([Name_LibFile '/Transfverter AC-DC (System Object)'],FullName_Apparatus{i});    
                 
           	% ### Error check
             otherwise

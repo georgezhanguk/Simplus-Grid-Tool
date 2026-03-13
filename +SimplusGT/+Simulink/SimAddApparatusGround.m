@@ -11,7 +11,7 @@ N_Apparatus = length(ApparatusType);
 for i = 1:N_Apparatus
 
   	% If the apparatus is an active apparatus and an ac apparatus
-    if ApparatusType{i} <= 90
+    if ApparatusType{i} <= 90 || (2000<=ApparatusType{i} && ApparatusType{i}<=2090)
         
         % Add apparatus ground
         Name_D_GND{i} = ['D-GND' num2str(i)];

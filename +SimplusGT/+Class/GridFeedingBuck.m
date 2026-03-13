@@ -34,6 +34,8 @@ classdef GridFeedingBuck < SimplusGT.Class.ModelAdvance
                 State = {'i','i_i'};
             elseif obj.ApparatusType == 1011
                 State = {'i','i_i','v_dc','v_dc_i'};
+            elseif obj.ApparatusType == 1012
+                State = {'i','i_i','v_i'};
             else
                 error('Error: Invalid ApparatusType.');
             end
@@ -60,13 +62,17 @@ classdef GridFeedingBuck < SimplusGT.Class.ModelAdvance
             v_dc_i = i;
             v_dc = V_dc;
             P_dc = e*i;
-
+            if obj.ApparatusType == 1012
+            v_i = i;
+            end
             % Get equilibrium
             x_e_1 = [i; i_i];
             if obj.ApparatusType == 1010
                 x_e = x_e_1;
             elseif obj.ApparatusType == 1011
                 x_e = [x_e_1; v_dc; v_dc_i];
+            elseif obj.ApparatusType == 1012
+                x_e = [x_e_1; v_i];
             end
         	u_e = [v; P_dc];
         end
@@ -85,9 +91,11 @@ classdef GridFeedingBuck < SimplusGT.Class.ModelAdvance
             xfi   = obj.Para(5);
             xfvdc = obj.Para(6);
             W0    = obj.Para(7);
+            xfv   = obj.Para(8);
             
             w_vdc	= xfvdc*2*pi; 	% (rad/s) bandwidth, vdc
             w_i     = xfi*2*pi;     % (rad/s) bandwidth, i
+            w_v     = xfv*2*pi;     % (rad/s) bandwidth, v
             L       = xwL/W0;     	% L filter
             R       = xR;           % L filter's inner resistance
             C_dc    = xCdc;
@@ -95,8 +103,11 @@ classdef GridFeedingBuck < SimplusGT.Class.ModelAdvance
             kp_v_dc = xVdc*xCdc*w_vdc;      % v_dc, P
             ki_v_dc = kp_v_dc*w_vdc/4;      % v_dc, I
             kp_i    = L * w_i;              % i_dq, P
-            ki_i    = L * w_i^2 /4;         % i_dq, I   
-            
+            ki_i    = L * w_i^2 /4;         % i_dq, I  
+            k=0.5;
+            kp_v    = w_v/w_i/k;              % v, P
+            ki_v    = w_v/k;         % v, I  
+            v_r=1;
             % Get states
           	i   	= x(1);
           	i_i  	= x(2);
@@ -106,12 +117,19 @@ classdef GridFeedingBuck < SimplusGT.Class.ModelAdvance
             elseif obj.ApparatusType == 1010
                 v_dc    = v_dc_r;
                 v_dc_i  = 0;
+            elseif obj.ApparatusType == 1012
+                v_dc    = v_dc_r;
+                v_dc_i  = 0;
+                v_i     = x(3);
             end
 
             % Get input
         	v    = u(1);
             P_dc = u(2);
             
+            if obj.Timer>2
+                P =-0.3;
+            end
             % State space equations
             % dx/dt = f(x,u)
             % y     = g(x,u)
@@ -125,6 +143,10 @@ classdef GridFeedingBuck < SimplusGT.Class.ModelAdvance
                 elseif obj.ApparatusType == 1010
                     % Direct current control                                           
                     i_r = P/V;
+                elseif obj.ApparatusType == 1012
+                % Direct current control                                           
+                i_r = -((v_r-v)*kp_v + v_i);
+                dv_i = (v_r-v)*ki_v;
                 end
                 
                 % Converter leg node voltage (duty cycle*v_dc)
@@ -144,6 +166,8 @@ classdef GridFeedingBuck < SimplusGT.Class.ModelAdvance
                 f_xu_1 = [di; di_i];
                 if obj.ApparatusType == 1011
                     f_xu = [f_xu_1; dv_dc; dv_dc_i];
+                elseif obj.ApparatusType == 1012
+                    f_xu = [f_xu_1; dv_i];
                 elseif obj.ApparatusType == 1010
                     f_xu = f_xu_1;
                 end

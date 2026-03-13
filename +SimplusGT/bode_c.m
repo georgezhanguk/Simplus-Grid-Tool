@@ -30,6 +30,7 @@ function Xw = bode_c(X,sbd,varargin)
     [PhaseShift,~] = SimplusGT.LoadVar(0,'PhaseShift',varargin);    % Default 0, i.e., no phase shift
     [LineWidth,~]  = SimplusGT.LoadVar(1.5,'LineWidth',varargin);   % Default 1.5
     [Color,~]      = SimplusGT.LoadVar([],'Color',varargin);
+    [LineStyle,~]  = SimplusGT.LoadVar('-','LineStyle',varargin);
     
     if (Option == 1)
         PlotOn = 1;
@@ -90,7 +91,7 @@ function Xw = bode_c(X,sbd,varargin)
     end
 
     if PlotOn == 1
-        SimplusGT.plot_c(Xw,imag(sbd)/(2*pi),'PhaseOn',PhaseOn,'PhaseShift',PhaseShift,'LineWidth',LineWidth,'Color',Color,varargin);
+        SimplusGT.plot_c(Xw,imag(sbd)/(2*pi),'PhaseOn',PhaseOn,'PhaseShift',PhaseShift,'LineWidth',LineWidth,'Color',Color,'LineStyle',LineStyle,varargin);
     else
         fprintf('Warning: The bode plot is disabled.');
     end

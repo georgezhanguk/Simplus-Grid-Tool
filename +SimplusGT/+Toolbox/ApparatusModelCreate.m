@@ -24,7 +24,7 @@
 % function." IEEE Transctions on Circuit and Systems, 2020.
 
 %% function
-function [GmObj,GmDSS,ApparatusPara,ApparatusEqui,DiscreDampingResistor,OtherInputs,StateStr,InputStr,OutputStr] ...
+function [GmObj,GmDSS,Gm_local,ApparatusPara,ApparatusEqui,DiscreDampingResistor,OtherInputs,StateStr,InputStr,OutputStr] ...
         = ApparatusModelCreate(ApparatusBus,Type,PowerFlow,Para,Ts,ListBus) 
 
 %% Create an object
@@ -147,7 +147,8 @@ switch floor(Type/10)
                         Para.R;
                         Para.fi;
                         Para.fvdc;
-                        Para.w0];
+                        Para.w0;
+                        Para.fv];
   	% ### Dc infinite bus
     case 109
         Apparatus = SimplusGT.Class.InfiniteBusDc;
@@ -193,9 +194,20 @@ switch floor(Type/10)
                         Para.D_ac;
                         Para.VLK0;
                         Para.W0;
-                        Para.wa
-                        Para.C_lk];    
-    
+                        Para.V0;
+                        Para.wa;
+                        Para.C_lk;
+                        Para.kp_v_dq;
+                        Para.ki_v_dq;
+                        Para.kp_i_dq;
+                        Para.ki_i_dq;
+                        Para.kp_v;
+                        Para.ki_v;
+                        Para.kp_i;
+                        Para.ki_i;
+                        Para.Rov;
+                        Para.Xov;];    
+
     % ### Otherwise
     otherwise
         error(['Error: apparatus type']);
@@ -256,7 +268,9 @@ end
 
 % Get the swing frame system model
 Gm = ModelSS;   
-
+%% temporary test
+Gm_local = Gm;
+%%
 % Output
 ApparatusPara = Apparatus.Para; 
 ApparatusEqui = {x_e,u_e,y_e,xi};
