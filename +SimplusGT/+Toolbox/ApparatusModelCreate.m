@@ -101,26 +101,87 @@ switch floor(Type/10)
                         Para.v_dc_ref
                         Para.fvdc;
                         Para.fibat];
+    % ### Photovoltaic inverter
     case 4 % Type 40-49
-        Apparatus = SimplusGT.Class.Photovoltaic('ApparatusType',Type);
-        Apparatus.Para = [ Para.wLf;
-                        Para.Rf;
-                        Para.wCf;
-                        Para.wLc;
-                        Para.Rc;
-                        Para.Xov;
-                        Para.N;
-                        Para.R;
-                        Para.fvdq;
-                        Para.fidq;
-                        Para.w0;
-                        Para.Sair;
-                        Para.Tair;
-                        Para.C_dc;
-                        Para.v_pv_ref;
-                        Para.v_dc_ref
-                        Para.fvdc;
-                        Para.fidc];
+        if Type ==40
+            Apparatus = SimplusGT.Class.PhotovoltaicGFM('ApparatusType',Type);
+            Apparatus.Para = [ Para.wLf;
+                            Para.Rf;
+                            Para.wCf;
+                            Para.wLc;
+                            Para.Rc;
+                            Para.Xov;
+                            Para.N;
+                            Para.R;
+                            Para.fvdq;
+                            Para.fidq;
+                            Para.w0;
+                            Para.Sair;
+                            Para.Tair;
+                            Para.C_dc;
+                            Para.v_pv_ref;
+                            Para.v_dc_ref
+                            Para.fvdc;
+                            Para.fidc];
+        elseif Type ==41
+            Apparatus = SimplusGT.Class.PhotovoltaicGFL('ApparatusType',Type);
+            Apparatus.Para = [ Para.wLf;
+                            Para.Rf;
+                            Para.wCf;
+                            Para.wLc;
+                            Para.Rc;
+                            Para.Xov;
+                            Para.fvdc;
+                            Para.fpll;
+                            Para.fidq;
+                            Para.C_dc;
+                            Para.w0;
+                            Para.Sair;
+                            Para.Tair;
+                            Para.v_pv_ref;
+                            Para.v_dc_ref
+                            Para.fvpv;
+                            Para.fidc];
+
+        end
+     % ### Wind turbine generator system
+    case 5 % Type 50-59
+        if Type == 50
+            Apparatus = SimplusGT.Class.WindTurbineGFM('ApparatusType',Type);
+            Apparatus.Para = [ Para.wLf;
+                            Para.Rf;
+                            Para.wCf;
+                            Para.wLc;
+                            Para.Rc
+                            Para.Xov
+                            Para.Dw;
+                            Para.f_droop;
+                            Para.f_v_dq;
+                            Para.f_i_dq;
+                            Para.w0;
+                            Para.v_dc_r;
+                            Para.C_dc
+                            Para.v_wpu;
+                            Para.n_r;
+                            Para.f_v_dc;
+                            Para.f_i_sdq;
+                            Para.f_w_m];
+        elseif Type == 51
+            Apparatus = SimplusGT.Class.WindTurbineGFL('ApparatusType',Type);
+            Apparatus.Para = [ Para.v_dc_r;
+                            Para.C_dc;
+                            Para.wLf;
+                            Para.Rf;
+                            Para.f_v_dc;
+                            Para.f_pll;
+                            Para.f_tau_pll;
+                            Para.f_i_dq;
+                            Para.w0;
+                            Para.v_wpu;
+                            Para.n_r;
+                            Para.f_i_sdq;
+                            Para.f_w_m];
+        end
     % ### Ac infinite bus
     case 9
         Apparatus = SimplusGT.Class.InfiniteBusAc;
